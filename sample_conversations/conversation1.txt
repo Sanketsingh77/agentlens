@@ -1,0 +1,10 @@
+User: Hi, I need help resetting my password.
+Agent: Sure! Can you provide your email address?
+User: Yes it's sanket@email.com
+Agent: I've sent a reset link to that email. Check your inbox.
+User: I don't see any email.
+Agent: Please check your spam folder as well.
+User: Found it! Thanks.
+Agent: You're welcome! Is there anything else I can help you with?
+User: No that's all.
+Agent: Have a great day!
