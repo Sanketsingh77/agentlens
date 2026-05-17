@@ -107,6 +107,9 @@ async def analyze(file: UploadFile = File(...)):
 
     contents = await file.read()
     conversation_text = contents.decode("utf-8")
+    os.makedirs("conversations", exist_ok=True)
+    with open(f"conversations/{file.filename}", "w") as f:
+        f.write(conversation_text)
 
     try:
         report = analyze_conversation(conversation_text)
@@ -133,12 +136,16 @@ async def debug(file: UploadFile = File(...)):
 
     contents = await file.read()
     conversation_text = contents.decode("utf-8")
+    os.makedirs("conversations", exist_ok=True)
+    with open(f"conversations/{file.filename}", "w") as f:
+        f.write(conversation_text)
 
     # Write to a temp file so run_debugger can read it
     with tempfile.NamedTemporaryFile(
         mode="w",
         suffix=".txt",
-        delete=False
+        delete=False,
+        dir=tempfile.gettempdir()
     ) as tmp:
         tmp.write(conversation_text)
         tmp_path = tmp.name
@@ -148,7 +155,8 @@ async def debug(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Debug failed: {str(e)}")
     finally:
-        os.unlink(tmp_path)
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
     return {
         "filename": file.filename,
@@ -189,3 +197,28 @@ def list_reports():
         "total": len(files),
         "reports": sorted(files)
     }
+@app.get("/reports/{filename}")
+def get_report(filename: str):
+    """Return the content of a specific report file."""
+    path = f"reports/{filename}"
+    if not os.path.exists(path) or not filename.endswith(".json"):
+        raise HTTPException(status_code=404, detail="Report not found.")
+    with open(path, "r") as f:
+        data = json.load(f)
+    return data
+@app.get("/conversations")
+def list_conversations():
+    """List all saved conversation files."""
+    folder = "conversations"
+    if not os.path.exists(folder):
+        return {"conversations": []}
+    files = [f for f in os.listdir(folder) if f.endswith(".txt")]
+    return {"total": len(files), "conversations": sorted(files)}
+@app.delete("/reports/{filename}")
+def delete_report(filename: str):
+    """Delete a specific report file."""
+    path = f"reports/{filename}"
+    if not os.path.exists(path) or not filename.endswith(".json"):
+        raise HTTPException(status_code=404, detail="Report not found.")
+    os.remove(path)
+    return {"deleted": filename}

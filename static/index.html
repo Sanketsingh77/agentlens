@@ -1,822 +1,1533 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AgentLens</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgentLens — AI Evaluation Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
 
-    body {
-      background: #0a0a0a;
-      color: #e8e8e8;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      min-height: 100vh;
-    }
+/* ─── RESET & BASE ─────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-    /* NAV */
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 48px;
-      border-bottom: 1px solid #1e1e1e;
-      position: sticky;
-      top: 0;
-      background: #0a0a0a;
-      z-index: 100;
-    }
-    .logo {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #fff;
-    }
-    .logo span { color: #6366f1; }
-    .nav-links { display: flex; gap: 8px; }
-    .nav-btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .nav-btn.active, .nav-btn:hover {
-      background: #6366f1;
-      color: #fff;
-    }
-    .nav-btn:not(.active) {
-      background: #141414;
-      color: #888;
-    }
+:root {
+  /* Surfaces */
+  --bg:        #F5F4F0;
+  --surface:   #FFFFFF;
+  --surface2:  #FAFAF8;
+  --surface3:  #F0EFE9;
 
-    /* HERO */
-    .hero {
-      text-align: center;
-      padding: 80px 48px 60px;
-      border-bottom: 1px solid #1e1e1e;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: #1a1a2e;
-      color: #6366f1;
-      border: 1px solid #2d2d5e;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      margin-bottom: 24px;
-      letter-spacing: 0.5px;
-    }
-    .hero h1 {
-      font-size: 52px;
-      font-weight: 800;
-      letter-spacing: -2px;
-      line-height: 1.1;
-      color: #fff;
-      margin-bottom: 16px;
-    }
-    .hero h1 span { color: #6366f1; }
-    .hero p {
-      font-size: 16px;
-      color: #666;
-      max-width: 480px;
-      margin: 0 auto 40px;
-      line-height: 1.7;
-    }
-    .hero-stats {
-      display: flex;
-      justify-content: center;
-      gap: 48px;
-    }
-    .stat { text-align: center; }
-    .stat-num {
-      font-size: 28px;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -1px;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: #555;
-      margin-top: 2px;
-    }
+  /* Borders */
+  --border:    #E4E2DA;
+  --border2:   #D1CECA;
 
-    /* MAIN CONTENT */
-    .content {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 48px 24px;
-    }
+  /* Text */
+  --ink:       #1C1917;
+  --ink2:      #44403C;
+  --ink3:      #78716C;
+  --ink4:      #A8A29E;
 
-    /* TABS */
-    .tab { display: none; }
-    .tab.active { display: block; }
+  /* Brand */
+  --blue:      #2563EB;
+  --blue-lt:   #EFF6FF;
+  --blue-mid:  #BFDBFE;
 
-    /* SECTION TITLE */
-    .section-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-    .section-sub {
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 28px;
-    }
+  /* Status */
+  --green:     #059669;
+  --green-lt:  #ECFDF5;
+  --amber:     #D97706;
+  --amber-lt:  #FFFBEB;
+  --red:       #DC2626;
+  --red-lt:    #FEF2F2;
 
-    /* UPLOAD ZONE */
-    .upload-zone {
-      border: 2px dashed #222;
-      border-radius: 12px;
-      padding: 48px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: #0f0f0f;
-      margin-bottom: 16px;
-    }
-    .upload-zone:hover, .upload-zone.drag {
-      border-color: #6366f1;
-      background: #0f0f1a;
-    }
-    .upload-icon { font-size: 36px; margin-bottom: 12px; }
-    .upload-zone p { color: #555; font-size: 14px; }
-    .upload-zone strong { color: #6366f1; }
-    .file-selected {
-      background: #0f1a0f;
-      border-color: #22c55e;
-      color: #22c55e;
-    }
+  /* Type */
+  --serif:     'Fraunces', Georgia, serif;
+  --sans:      'DM Sans', system-ui, sans-serif;
 
-    /* BUTTON */
-    .btn {
-      width: 100%;
-      padding: 14px;
-      background: #6366f1;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 8px;
-    }
-    .btn:hover { background: #5254cc; }
-    .btn:disabled {
-      background: #1e1e1e;
-      color: #444;
-      cursor: not-allowed;
-    }
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow:    0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.05);
+}
 
-    /* LOADING */
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 32px;
-      color: #555;
-    }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid #1e1e1e;
-      border-top-color: #6366f1;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 12px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+html { height: 100%; }
 
-    /* RESULTS */
-    .result-card {
-      background: #0f0f0f;
-      border: 1px solid #1e1e1e;
-      border-radius: 12px;
-      padding: 28px;
-      margin-top: 24px;
-      display: none;
-    }
-    .result-card.show { display: block; }
-    .result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .result-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-    }
-    .result-file {
-      font-size: 12px;
-      color: #555;
-      background: #141414;
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
+body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: #F7F8FA;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
 
-    /* SCORE GRID */
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .score-card {
-      background: #141414;
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-    }
-    .score-value {
-      font-size: 32px;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -1px;
-    }
-    .score-value.good { color: #22c55e; }
-    .score-value.mid { color: #f59e0b; }
-    .score-value.bad { color: #ef4444; }
-    .score-label {
-      font-size: 11px;
-      color: #555;
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+/* ─── SIDEBAR ──────────────────────────────────────── */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+}
 
-    /* RISK BADGE */
-    .risk-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .risk-low { background: #0f2a0f; color: #22c55e; }
-    .risk-medium { background: #2a1f0f; color: #f59e0b; }
-    .risk-high { background: #2a0f0f; color: #ef4444; }
+.logo {
+  padding: 28px 24px 24px;
+  border-bottom: 1px solid var(--border);
+}
 
-    /* SUMMARY BOX */
-    .summary-box {
-      background: #141414;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .summary-box label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #555;
-      display: block;
-      margin-bottom: 6px;
-    }
-    .summary-box p {
-      font-size: 13px;
-      color: #ccc;
-      line-height: 1.6;
-    }
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
 
-    /* MISSED LIST */
-    .missed-list { list-style: none; }
-    .missed-list li {
-      font-size: 13px;
-      color: #ccc;
-      padding: 6px 0;
-      border-bottom: 1px solid #1a1a1a;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .missed-list li::before {
-      content: '→';
-      color: #6366f1;
-      flex-shrink: 0;
-    }
-    .missed-list li:last-child { border-bottom: none; }
+.logo-icon {
+  width: 32px; height: 32px;
+  background: var(--ink);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-    /* DEBUG TURNS */
-    .turn-card {
-      background: #141414;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 10px;
-      border-left: 3px solid #1e1e1e;
-    }
-    .turn-card.issue { border-left-color: #ef4444; }
-    .turn-card.ok { border-left-color: #22c55e; }
-    .turn-num {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #555;
-      margin-bottom: 8px;
-    }
-    .turn-msg {
-      font-size: 13px;
-      color: #ccc;
-      margin-bottom: 4px;
-    }
-    .turn-msg strong { color: #888; }
-    .turn-issue {
-      margin-top: 10px;
-      padding: 10px;
-      background: #1a0f0f;
-      border-radius: 8px;
-    }
-    .severity-badge {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-bottom: 6px;
-      display: inline-block;
-    }
-    .sev-HIGH { background: #2a0f0f; color: #ef4444; }
-    .sev-MEDIUM { background: #2a1f0f; color: #f59e0b; }
-    .sev-LOW { background: #0f2a1f; color: #22c55e; }
-    .turn-problem { font-size: 12px; color: #888; margin-bottom: 4px; }
-    .turn-better { font-size: 12px; color: #6366f1; }
+.logo-icon svg {
+  width: 16px; height: 16px;
+  fill: white;
+}
 
-    /* SCENARIO FORM */
-    .scenario-input {
-      width: 100%;
-      background: #0f0f0f;
-      border: 1px solid #222;
-      border-radius: 10px;
-      padding: 14px 16px;
-      color: #e8e8e8;
-      font-size: 14px;
-      outline: none;
-      resize: vertical;
-      min-height: 100px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-      margin-bottom: 8px;
-    }
-    .scenario-input:focus { border-color: #6366f1; }
+.logo-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+}
 
-    /* SCENARIO CARDS */
-    .scenario-group { margin-bottom: 24px; }
-    .scenario-group-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #555;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .scenario-group-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #1e1e1e;
-    }
-    .type-NORMAL .scenario-group-title { color: #22c55e; }
-    .type-EDGE .scenario-group-title { color: #f59e0b; }
-    .type-ADVERSARIAL .scenario-group-title { color: #ef4444; }
+.logo-name em {
+  font-style: normal;
+  color: var(--blue);
+}
 
-    .scenario-item {
-      background: #141414;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 8px;
-    }
-    .scenario-item-id {
-      font-size: 10px;
-      color: #444;
-      margin-bottom: 6px;
-    }
-    .scenario-user {
-      font-size: 13px;
-      color: #e8e8e8;
-      margin-bottom: 6px;
-    }
-    .scenario-expected {
-      font-size: 12px;
-      color: #555;
-    }
+.logo-tag {
+  font-size: 11px;
+  color: var(--ink4);
+  letter-spacing: 0.3px;
+  margin-left: 42px;
+}
 
-    /* REPORTS */
-    .report-item {
-      background: #0f0f0f;
-      border: 1px solid #1e1e1e;
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .report-name {
-      font-size: 13px;
-      color: #ccc;
-    }
-    .report-icon { font-size: 18px; }
+.nav {
+  padding: 20px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-    /* ERROR */
-    .error-box {
-      background: #1a0f0f;
-      border: 1px solid #2a1515;
-      border-radius: 10px;
-      padding: 16px;
-      color: #ef4444;
-      font-size: 13px;
-      margin-top: 16px;
-      display: none;
-    }
-    .error-box.show { display: block; }
-  </style>
+.nav-section {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  padding: 0 12px;
+  margin: 12px 0 6px;
+}
+
+.nav-section:first-child { margin-top: 0; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink3);
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.nav-item:hover {
+  background: var(--surface3);
+  color: var(--ink);
+}
+
+.nav-item.active {
+  background: var(--blue-lt);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.nav-item.active .nav-icon { opacity: 1; }
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.api-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink3);
+}
+
+.status-dot {
+  width: 7px; height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(5,150,105,0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 4px rgba(5,150,105,0); }
+}
+
+.api-version {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink4);
+  background: var(--surface3);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ─── MAIN ──────────────────────────────────────────── */
+.main {
+  margin-left: 240px;
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── TOPBAR ────────────────────────────────────────── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-heading {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+}
+
+.page-sub {
+  font-size: 13px;
+  color: var(--ink3);
+  margin-top: 1px;
+}
+
+.topbar-pill {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--blue);
+  background: var(--blue-lt);
+  border: 1px solid var(--blue-mid);
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+/* ─── CONTENT ───────────────────────────────────────── */
+.content {
+  padding: 36px;
+  flex: 1;
+}
+
+.tab { display: none; flex-direction: column; height: 100%; }
+.tab.active { display: flex; flex-direction: column; }
+
+/* ─── SECTION LABEL ─────────────────────────────────── */
+.sec-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sec-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── UPLOAD ────────────────────────────────────────── */
+.upload-area {
+  background: var(--surface);
+  border: 1.5px dashed var(--border2);
+  border-radius: 12px;
+  padding: 36px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.upload-area:hover {
+  border-color: var(--blue);
+  background: var(--blue-lt);
+}
+
+.upload-area.drag {
+  border-color: var(--blue);
+  background: var(--blue-lt);
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+}
+
+.upload-area.done {
+  border-color: var(--green);
+  background: var(--green-lt);
+  border-style: solid;
+}
+
+.upload-icon-wrap {
+  width: 48px; height: 48px;
+  background: var(--surface3);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  transition: background 0.2s;
+}
+
+.upload-area:hover .upload-icon-wrap,
+.upload-area.drag .upload-icon-wrap {
+  background: var(--blue-mid);
+}
+
+.upload-area.done .upload-icon-wrap {
+  background: #A7F3D0;
+}
+
+.upload-icon-wrap svg {
+  width: 22px; height: 22px;
+  color: var(--ink3);
+  transition: color 0.2s;
+}
+
+.upload-area:hover .upload-icon-wrap svg,
+.upload-area.drag .upload-icon-wrap svg {
+  color: var(--blue);
+}
+
+.upload-area.done .upload-icon-wrap svg {
+  color: var(--green);
+}
+
+.upload-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.upload-sub {
+  font-size: 13px;
+  color: var(--ink3);
+}
+
+.upload-sub strong {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.file-name {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ─── BUTTON ────────────────────────────────────────── */
+.btn {
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(37,99,235,0.3);
+}
+
+.btn:hover { background: #1D4ED8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+.btn:active { transform: none; }
+
+.btn:disabled {
+  background: var(--surface3);
+  color: var(--ink4);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+/* ─── LOADING ───────────────────────────────────────── */
+.loading {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+  color: var(--ink3);
+  font-size: 14px;
+}
+
+.loading.show { display: flex; }
+
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── ERROR ─────────────────────────────────────────── */
+.err {
+  display: none;
+  background: var(--red-lt);
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--red);
+  margin-top: 14px;
+  align-items: center;
+  gap: 10px;
+}
+
+.err.show { display: flex; }
+
+/* ─── RESULT CARD ───────────────────────────────────── */
+.result {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 20px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.result.show { display: block; }
+
+.result-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.result-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.result-file {
+  font-size: 12px;
+  color: var(--ink3);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.result-body { padding: 24px; }
+
+/* ─── SCORE CARDS ───────────────────────────────────── */
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.score-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.score-val {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.score-val.good { color: var(--green); }
+.score-val.mid  { color: var(--amber); }
+.score-val.bad  { color: var(--red); }
+
+.score-lbl {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink3);
+  letter-spacing: 0.2px;
+}
+
+/* ─── RISK PILL ─────────────────────────────────────── */
+.risk-pill {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 16px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.risk-low    { background: var(--green-lt);  color: var(--green); border: 1px solid #A7F3D0; }
+.risk-medium { background: var(--amber-lt);  color: var(--amber); border: 1px solid #FDE68A; }
+.risk-high   { background: var(--red-lt);    color: var(--red);   border: 1px solid #FECACA; }
+
+/* ─── INFO GRID ─────────────────────────────────────── */
+.info-grid { display: flex; flex-direction: column; gap: 10px; }
+
+.info-block {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.info-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-bottom: 8px;
+}
+
+.info-text {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+.missed-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+.missed-list li {
+  font-size: 14px;
+  color: var(--ink2);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+
+.missed-list li::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--blue);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+/* ─── TURN CARDS ────────────────────────────────────── */
+.turns-list { display: flex; flex-direction: column; gap: 10px; }
+
+.turn-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.turn-hdr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.turn-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink3);
+  letter-spacing: 0.3px;
+}
+
+.turn-status {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+.st-ok    { background: var(--green-lt); color: var(--green); border: 1px solid #A7F3D0; }
+.st-issue { background: var(--red-lt);   color: var(--red);   border: 1px solid #FECACA; }
+
+.turn-body { padding: 16px; }
+
+.turn-msg {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+.turn-msg + .turn-msg { margin-top: 10px; }
+
+.turn-msg-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-bottom: 3px;
+}
+
+.turn-msg-user .turn-msg-label { color: var(--blue); }
+.turn-msg-agent .turn-msg-label { color: var(--ink3); }
+
+.turn-issue-box {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--red-lt);
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+}
+
+.sev-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.sev-HIGH   { background: #FECACA; color: var(--red); }
+.sev-MEDIUM { background: #FDE68A; color: var(--amber); }
+.sev-LOW    { background: #A7F3D0; color: var(--green); }
+.sev-NONE   { background: var(--surface3); color: var(--ink3); }
+
+.issue-prob {
+  font-size: 13px;
+  color: var(--ink2);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.issue-fix {
+  font-size: 13px;
+  color: var(--blue);
+  line-height: 1.6;
+  padding-top: 8px;
+  border-top: 1px solid #FECACA;
+  display: flex;
+  gap: 8px;
+}
+
+.issue-fix::before { content: '→'; flex-shrink: 0; }
+
+/* ─── TEXTAREA ──────────────────────────────────────── */
+.scenario-ta {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--ink);
+  font-size: 14px;
+  font-family: var(--sans);
+  line-height: 1.7;
+  outline: none;
+  resize: vertical;
+  min-height: 96px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.scenario-ta:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.scenario-ta::placeholder { color: var(--ink4); }
+
+/* ─── SCENARIO GROUPS ───────────────────────────────── */
+.sg-hdr {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sg-hdr:first-child { margin-top: 0; }
+
+.sg-hdr::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.sg-normal    .sg-hdr { color: var(--green); }
+.sg-edge      .sg-hdr { color: var(--amber); }
+.sg-adversarial .sg-hdr { color: var(--red); }
+
+.sc-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+}
+
+.sc-item:last-child { margin-bottom: 0; }
+
+.sc-id {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink4);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.sc-user {
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 5px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.sc-exp {
+  font-size: 13px;
+  color: var(--ink3);
+  line-height: 1.5;
+}
+
+.sc-exp::before { content: 'Expected: '; font-weight: 600; }
+
+/* ─── REPORTS ───────────────────────────────────────── */
+.rpt-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.rpt-item:hover {
+  border-color: var(--border2);
+  box-shadow: var(--shadow-sm);
+}
+
+.rpt-icon {
+  width: 34px; height: 34px;
+  background: var(--surface3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rpt-icon svg { width: 16px; height: 16px; color: var(--ink3); }
+
+.rpt-name {
+  font-size: 14px;
+  color: var(--ink2);
+  font-weight: 500;
+}
+
+.rpt-ext {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink4);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ─── EMPTY STATE ───────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--ink4);
+}
+
+.empty-state svg {
+  width: 40px; height: 40px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.empty-state p { font-size: 14px; }
+
+/* ─── SCROLLBAR ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
+
+</style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="logo">Agent<span>Lens</span></div>
-  <div class="nav-links">
-    <button class="nav-btn active" onclick="switchTab('analyze')">Analyze</button>
-    <button class="nav-btn" onclick="switchTab('debug')">Debug</button>
-    <button class="nav-btn" onclick="switchTab('scenarios')">Scenarios</button>
-    <button class="nav-btn" onclick="switchTab('reports')">Reports</button>
+<!-- ─── SIDEBAR ──────────────────────────────────── -->
+<aside class="sidebar">
+
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="3"/>
+          <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8" cy="8" r="6" fill="none" stroke="white" stroke-width="1" opacity="0.4"/>
+        </svg>
+      </div>
+      <span class="logo-name">Agent<em>Lens</em></span>
+    </div>
+    <div class="logo-tag">AI Evaluation Platform</div>
   </div>
-</nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">AI Agent Testing & Evaluation</div>
-  <h1>Evaluate AI Agents<br>with <span>Precision</span></h1>
-  <p>Upload conversations, debug turn-by-turn, generate adversarial test scenarios — all powered by LLMs.</p>
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">4</div>
-      <div class="stat-label">Quality Metrics</div>
+  <nav class="nav">
+    <div class="nav-section">Evaluation</div>
+
+    <div class="nav-item active" onclick="switchTab('analyze',this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+      </svg>
+      Conversation Analyzer
     </div>
-    <div class="stat">
-      <div class="stat-num">15</div>
-      <div class="stat-label">Scenarios Generated</div>
+
+    <div class="nav-item" onclick="switchTab('debug',this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM6.293 6.707a1 1 0 011.414 0L9 8.414l1.293-1.293a1 1 0 011.414 1.414L10 10.828l1.707 1.707a1 1 0 01-1.414 1.414L9 12.243l-1.293 1.293a1 1 0 01-1.414-1.414L7.586 10.5 6.293 9.207a1 1 0 010-1.414zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1z" clip-rule="evenodd"/>
+        <path d="M4 8H3a1 1 0 000 2h1V8zM16 11a1 1 0 100-2h-1v2h1zM5 14.657a7 7 0 0010 0A7 7 0 005 14.657z"/>
+      </svg>
+      Turn-by-Turn Debugger
     </div>
-    <div class="stat">
-      <div class="stat-num">3</div>
-      <div class="stat-label">Test Types</div>
+
+    <div class="nav-section">Testing</div>
+
+    <div class="nav-item" onclick="switchTab('scenarios',this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+      </svg>
+      Scenario Generator
+    </div>
+
+    <div class="nav-section">History</div>
+
+    <div class="nav-item" onclick="switchTab('reports',this)">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+      </svg>
+      Saved Reports
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="api-status">
+      <span class="status-dot"></span>
+      API connected
+      <span class="api-version">v1.0.0</span>
     </div>
   </div>
-</div>
+</aside>
 
-<!-- CONTENT -->
-<div class="content">
+<!-- ─── MAIN ────────────────────────────────────── -->
+<main class="main">
 
-  <!-- ANALYZE TAB -->
+  <!-- ── ANALYZE ─────────────────────────────── -->
   <div class="tab active" id="tab-analyze">
-    <div class="section-title">Conversation Analyzer</div>
-    <div class="section-sub">Upload a .txt conversation file to get a full quality report.</div>
-
-    <div class="upload-zone" id="analyze-zone" onclick="document.getElementById('analyze-file').click()">
-      <div class="upload-icon">📂</div>
-      <p><strong>Click to upload</strong> or drag and drop</p>
-      <p style="margin-top:4px;font-size:12px;">.txt files only</p>
+    <div class="topbar">
+      <div>
+        <div class="page-heading">Conversation Analyzer</div>
+        <div class="page-sub">Score agent quality across tone, resolution, and hallucination risk</div>
+      </div>
+      <div class="topbar-pill">LLM-Powered</div>
     </div>
-    <input type="file" id="analyze-file" accept=".txt" style="display:none" onchange="fileSelected('analyze')"/>
+    <div class="content">
+      <div class="sec-label">Upload File</div>
 
-    <button class="btn" id="analyze-btn" onclick="runAnalyze()" disabled>Analyze Conversation</button>
-
-    <div class="loading" id="analyze-loading">
-      <div class="spinner"></div>
-      <p>Analyzing conversation...</p>
-    </div>
-
-    <div class="error-box" id="analyze-error"></div>
-
-    <div class="result-card" id="analyze-result">
-      <div class="result-header">
-        <div class="result-title">Quality Report</div>
-        <div class="result-file" id="analyze-filename"></div>
-      </div>
-
-      <div class="score-grid">
-        <div class="score-card">
-          <div class="score-value" id="tone-score">—</div>
-          <div class="score-label">Tone Score</div>
+      <div class="upload-area" id="az" onclick="document.getElementById('af').click()">
+        <div class="upload-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+          </svg>
         </div>
-        <div class="score-card">
-          <div class="score-value" id="resolution-score">—</div>
-          <div class="score-label">Resolution Score</div>
-        </div>
-        <div class="score-card">
-          <div class="score-value" id="hallucination-risk">—</div>
-          <div class="score-label">Hallucination Risk</div>
+        <div class="upload-title">Drop your conversation file here</div>
+        <div class="upload-sub"><strong>Click to browse</strong> or drag and drop &nbsp;·&nbsp; .txt format (User: / Agent: lines)</div>
+        <div class="file-name" id="af-name" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="color:var(--green)"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span></span>
         </div>
       </div>
+      <input type="file" id="af" accept=".txt" style="display:none" onchange="onFile('af','az','af-name','abtn')"/>
+      <button class="btn" id="abtn" onclick="runAnalyze()" disabled>Run Analysis</button>
 
-      <div class="summary-box">
-        <label>Summary</label>
-        <p id="summary-text"></p>
+      <div class="loading" id="al">
+        <div class="spinner"></div>
+        Analyzing conversation quality…
+      </div>
+      <div class="err" id="ae">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+        <span id="ae-msg"></span>
       </div>
 
-      <div class="summary-box">
-        <label>Recommendation</label>
-        <p id="recommendation-text"></p>
-      </div>
-
-      <div class="summary-box">
-        <label>Missed Opportunities</label>
-        <ul class="missed-list" id="missed-list"></ul>
+      <div class="result" id="ar">
+        <div class="result-hdr">
+          <div class="result-title">Quality Report</div>
+          <div class="result-file" id="ar-file"></div>
+        </div>
+        <div class="result-body">
+          <div class="score-row">
+            <div class="score-box">
+              <div class="score-val" id="tone">—</div>
+              <div class="score-lbl">Tone Score</div>
+            </div>
+            <div class="score-box">
+              <div class="score-val" id="res">—</div>
+              <div class="score-lbl">Resolution Score</div>
+            </div>
+            <div class="score-box">
+              <div id="risk-pill" class="risk-pill">—</div>
+              <div class="score-lbl" style="margin-top:8px">Hallucination Risk</div>
+            </div>
+          </div>
+          <div class="info-grid">
+            <div class="info-block">
+              <div class="info-lbl">Summary</div>
+              <div class="info-text" id="summary"></div>
+            </div>
+            <div class="info-block">
+              <div class="info-lbl">Recommendation</div>
+              <div class="info-text" id="rec"></div>
+            </div>
+            <div class="info-block">
+              <div class="info-lbl">Missed Opportunities</div>
+              <ul class="missed-list" id="missed"></ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- DEBUG TAB -->
+  <!-- ── DEBUG ───────────────────────────────── -->
   <div class="tab" id="tab-debug">
-    <div class="section-title">Turn-by-Turn Debugger</div>
-    <div class="section-sub">See exactly which agent response failed and why.</div>
-
-    <div class="upload-zone" id="debug-zone" onclick="document.getElementById('debug-file').click()">
-      <div class="upload-icon">🔍</div>
-      <p><strong>Click to upload</strong> or drag and drop</p>
-      <p style="margin-top:4px;font-size:12px;">.txt files only</p>
-    </div>
-    <input type="file" id="debug-file" accept=".txt" style="display:none" onchange="fileSelected('debug')"/>
-
-    <button class="btn" id="debug-btn" onclick="runDebug()" disabled>Debug Conversation</button>
-
-    <div class="loading" id="debug-loading">
-      <div class="spinner"></div>
-      <p>Debugging turn by turn...</p>
-    </div>
-
-    <div class="error-box" id="debug-error"></div>
-
-    <div class="result-card" id="debug-result">
-      <div class="result-header">
-        <div class="result-title">Debug Report</div>
-        <div class="result-file" id="debug-filename"></div>
+    <div class="topbar">
+      <div>
+        <div class="page-heading">Turn-by-Turn Debugger</div>
+        <div class="page-sub">Pinpoint exactly which agent responses failed and why</div>
       </div>
-      <div id="debug-turns"></div>
+      <div class="topbar-pill">Deep Analysis</div>
+    </div>
+    <div class="content">
+      <div class="sec-label">Upload File</div>
+
+      <div class="upload-area" id="dz" onclick="document.getElementById('df').click()">
+        <div class="upload-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+          </svg>
+        </div>
+        <div class="upload-title">Drop your conversation file here</div>
+        <div class="upload-sub"><strong>Click to browse</strong> or drag and drop &nbsp;·&nbsp; .txt format</div>
+        <div class="file-name" id="df-name" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="color:var(--green)"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span></span>
+        </div>
+      </div>
+      <input type="file" id="df" accept=".txt" style="display:none" onchange="onFile('df','dz','df-name','dbtn')"/>
+      <button class="btn" id="dbtn" onclick="runDebug()" disabled>Run Debugger</button>
+
+      <div class="loading" id="dl">
+        <div class="spinner"></div>
+        Debugging turn by turn…
+      </div>
+      <div class="err" id="de">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+        <span id="de-msg"></span>
+      </div>
+
+      <div class="result" id="dr">
+        <div class="result-hdr">
+          <div class="result-title">Debug Report</div>
+          <div class="result-file" id="dr-file"></div>
+        </div>
+        <div class="result-body" id="dr-body"></div>
+      </div>
     </div>
   </div>
 
-  <!-- SCENARIOS TAB -->
+  <!-- ── SCENARIOS ───────────────────────────── -->
   <div class="tab" id="tab-scenarios">
-    <div class="section-title">Scenario Generator</div>
-    <div class="section-sub">Describe any AI agent and get 15 test scenarios — normal, edge case, and adversarial.</div>
-
-    <textarea
-      class="scenario-input"
-      id="scenario-input"
-      placeholder="Describe your AI agent...&#10;Example: A customer support agent for an e-commerce store that helps with orders, returns, and complaints"
-    ></textarea>
-
-    <button class="btn" onclick="runScenarios()">Generate 15 Test Scenarios</button>
-
-    <div class="loading" id="scenario-loading">
-      <div class="spinner"></div>
-      <p>Generating scenarios...</p>
-    </div>
-
-    <div class="error-box" id="scenario-error"></div>
-
-    <div class="result-card" id="scenario-result">
-      <div class="result-header">
-        <div class="result-title">Generated Scenarios</div>
-        <div class="result-file" id="scenario-count"></div>
+    <div class="topbar">
+      <div>
+        <div class="page-heading">Scenario Generator</div>
+        <div class="page-sub">Auto-generate 15 test cases — normal, edge, and adversarial</div>
       </div>
-      <div id="scenario-groups"></div>
+      <div class="topbar-pill">AI-Generated</div>
+    </div>
+    <div class="content">
+      <div class="sec-label">Agent Description</div>
+
+      <textarea class="scenario-ta" id="sc-input"
+        placeholder="Describe your AI agent…&#10;Example: A customer support agent for an e-commerce store that handles orders, returns, and complaints"></textarea>
+      <button class="btn" onclick="runScenarios()">Generate 15 Scenarios</button>
+
+      <div class="loading" id="sl">
+        <div class="spinner"></div>
+        Generating test scenarios…
+      </div>
+      <div class="err" id="se">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="flex-shrink:0"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+        <span id="se-msg"></span>
+      </div>
+
+      <div class="result" id="sr">
+        <div class="result-hdr">
+          <div class="result-title">Generated Test Scenarios</div>
+          <div class="result-file" id="sr-count"></div>
+        </div>
+        <div class="result-body" id="sr-body"></div>
+      </div>
     </div>
   </div>
 
-  <!-- REPORTS TAB -->
+  <!-- ── REPORTS ─────────────────────────────── -->
   <div class="tab" id="tab-reports">
-    <div class="section-title">Saved Reports</div>
-    <div class="section-sub">All reports generated by AgentLens.</div>
-    <div id="reports-list"></div>
+    <div class="topbar">
+      <div>
+        <div class="page-heading">Saved Reports</div>
+        <div class="page-sub">All JSON reports generated by AgentLens</div>
+      </div>
+      <div class="topbar-pill">File System</div>
+    </div>
+    <div class="content">
+      <div class="sec-label">Report Files</div>
+      <div id="rpt-list"></div>
+    </div>
   </div>
 
-</div>
+</main>
 
 <script>
-  const API = 'http://127.0.0.1:8000';
+const API = 'http://127.0.0.1:8000';
 
-  // ── TAB SWITCHING ──
-  function switchTab(name) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    event.target.classList.add('active');
-    if (name === 'reports') loadReports();
+/* ─── TAB SWITCHING ──────────────────────── */
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'reports') loadReports();
+}
+
+/* ─── FILE HANDLER ───────────────────────── */
+function onFile(inputId, zoneId, nameId, btnId) {
+  const f = document.getElementById(inputId).files[0];
+  if (!f) return;
+  const zone  = document.getElementById(zoneId);
+  const nameEl = document.getElementById(nameId);
+  zone.classList.add('done');
+  nameEl.style.display = 'flex';
+  nameEl.querySelector('span').textContent = f.name;
+  document.getElementById(btnId).disabled = false;
+}
+
+/* ─── HELPERS ────────────────────────────── */
+function scoreClass(v) { return v >= 7 ? 'good' : v >= 4 ? 'mid' : 'bad'; }
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.classList.add('show');
+  const span = el.querySelector('span') || el;
+  if (el.querySelector('span')) el.querySelector('span').textContent = msg;
+  else el.textContent = msg;
+}
+
+/* ─── ANALYZE ────────────────────────────── */
+async function runAnalyze() {
+  const f   = document.getElementById('af').files[0];
+  const ld  = document.getElementById('al');
+  const er  = document.getElementById('ae');
+  const rs  = document.getElementById('ar');
+
+  ld.classList.add('show'); rs.classList.remove('show'); er.classList.remove('show');
+  document.getElementById('abtn').disabled = true;
+
+  try {
+    const fd = new FormData(); fd.append('file', f);
+    const r  = await fetch(API + '/analyze', { method:'POST', body:fd });
+    const d  = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Request failed');
+
+    const rp = d.report;
+    document.getElementById('ar-file').textContent = d.filename;
+
+    const te = document.getElementById('tone');
+    te.textContent = rp.tone_score + '/10';
+    te.className   = 'score-val ' + scoreClass(rp.tone_score);
+
+    const re = document.getElementById('res');
+    re.textContent = rp.resolution_score + '/10';
+    re.className   = 'score-val ' + scoreClass(rp.resolution_score);
+
+    const risk = rp.hallucination_risk.toLowerCase();
+    const rke  = document.getElementById('risk-pill');
+    rke.textContent = risk.charAt(0).toUpperCase() + risk.slice(1);
+    rke.className   = 'risk-pill risk-' + risk;
+
+    document.getElementById('summary').textContent = rp.overall_summary;
+    document.getElementById('rec').textContent     = rp.recommendation;
+    document.getElementById('missed').innerHTML    =
+      rp.missed_opportunities.map(o => `<li>${o}</li>`).join('');
+
+    rs.classList.add('show');
+    loadReports();
+  } catch(e) {
+    showErr('ae', 'Error: ' + e.message);
+  } finally {
+    ld.classList.remove('show');
+    document.getElementById('abtn').disabled = false;
   }
+}
 
-  // ── FILE SELECTED ──
-  function fileSelected(type) {
-    const input = document.getElementById(type + '-file');
-    const zone = document.getElementById(type + '-zone');
-    const btn = document.getElementById(type + '-btn');
-    if (input.files.length > 0) {
-      zone.classList.add('file-selected');
-      zone.querySelector('p').innerHTML = '✅ ' + input.files[0].name;
-      btn.disabled = false;
-    }
-  }
+/* ─── DEBUG ──────────────────────────────── */
+async function runDebug() {
+  const f  = document.getElementById('df').files[0];
+  const ld = document.getElementById('dl');
+  const er = document.getElementById('de');
+  const rs = document.getElementById('dr');
 
-  // ── SCORE COLOR ──
-  function scoreColor(el, val) {
-    el.classList.remove('good', 'mid', 'bad');
-    if (val >= 7) el.classList.add('good');
-    else if (val >= 4) el.classList.add('mid');
-    else el.classList.add('bad');
-  }
+  ld.classList.add('show'); rs.classList.remove('show'); er.classList.remove('show');
+  document.getElementById('dbtn').disabled = true;
 
-  // ── ANALYZE ──
-  async function runAnalyze() {
-    const file = document.getElementById('analyze-file').files[0];
-    const loading = document.getElementById('analyze-loading');
-    const result = document.getElementById('analyze-result');
-    const error = document.getElementById('analyze-error');
-    const btn = document.getElementById('analyze-btn');
+  try {
+    const fd = new FormData(); fd.append('file', f);
+    const r  = await fetch(API + '/debug', { method:'POST', body:fd });
+    const d  = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Request failed');
 
-    loading.style.display = 'block';
-    result.classList.remove('show');
-    error.classList.remove('show');
-    btn.disabled = true;
-
-    try {
-      const form = new FormData();
-      form.append('file', file);
-      const res = await fetch(API + '/analyze', { method: 'POST', body: form });
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.detail || 'Analysis failed');
-
-      const r = data.report;
-      document.getElementById('analyze-filename').textContent = data.filename;
-
-      const toneEl = document.getElementById('tone-score');
-      const resEl = document.getElementById('resolution-score');
-      toneEl.textContent = r.tone_score + '/10';
-      resEl.textContent = r.resolution_score + '/10';
-      scoreColor(toneEl, r.tone_score);
-      scoreColor(resEl, r.resolution_score);
-
-      const risk = r.hallucination_risk.toLowerCase();
-      const riskEl = document.getElementById('hallucination-risk');
-      riskEl.textContent = risk.charAt(0).toUpperCase() + risk.slice(1);
-      riskEl.className = 'score-value risk-' + risk;
-
-      document.getElementById('summary-text').textContent = r.overall_summary;
-      document.getElementById('recommendation-text').textContent = r.recommendation;
-
-      const missed = document.getElementById('missed-list');
-      missed.innerHTML = r.missed_opportunities.map(o => `<li>${o}</li>`).join('');
-
-      result.classList.add('show');
-    } catch (e) {
-      error.textContent = '❌ ' + e.message;
-      error.classList.add('show');
-    } finally {
-      loading.style.display = 'none';
-      btn.disabled = false;
-    }
-  }
-
-  // ── DEBUG ──
-  async function runDebug() {
-    const file = document.getElementById('debug-file').files[0];
-    const loading = document.getElementById('debug-loading');
-    const result = document.getElementById('debug-result');
-    const error = document.getElementById('debug-error');
-    const btn = document.getElementById('debug-btn');
-
-    loading.style.display = 'block';
-    result.classList.remove('show');
-    error.classList.remove('show');
-    btn.disabled = true;
-
-    try {
-      const form = new FormData();
-      form.append('file', file);
-      const res = await fetch(API + '/debug', { method: 'POST', body: form });
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.detail || 'Debug failed');
-
-      document.getElementById('debug-filename').textContent = data.filename;
-
-      const turns = data.turns || [];
-      document.getElementById('debug-turns').innerHTML = turns.map(t => `
-        <div class="turn-card ${t.issue_detected ? 'issue' : 'ok'}">
-          <div class="turn-num">Turn ${t.turn}</div>
-          <div class="turn-msg"><strong>User:</strong> ${t.user_message}</div>
-          <div class="turn-msg"><strong>Agent:</strong> ${t.agent_message}</div>
+    document.getElementById('dr-file').textContent = d.filename;
+    document.getElementById('dr-body').innerHTML = (d.turns || []).map(t => `
+      <div class="turn-card">
+        <div class="turn-hdr">
+          <span class="turn-num">Turn ${t.turn}</span>
+          <span class="turn-status ${t.issue_detected ? 'st-issue' : 'st-ok'}">
+            ${t.issue_detected ? 'Issue detected' : 'Clean'}
+          </span>
+        </div>
+        <div class="turn-body">
+          <div class="turn-msg turn-msg-user">
+            <div class="turn-msg-label">User</div>
+            ${t.user_message}
+          </div>
+          <div class="turn-msg turn-msg-agent">
+            <div class="turn-msg-label">Agent</div>
+            ${t.agent_message}
+          </div>
           ${t.issue_detected ? `
-            <div class="turn-issue">
-              <span class="severity-badge sev-${t.severity}">${t.severity}</span>
-              <div class="turn-problem">⚠️ ${t.problem}</div>
-              <div class="turn-better">💡 ${t.better_response}</div>
-            </div>` : '<div style="color:#22c55e;font-size:12px;margin-top:8px;">✅ No issue detected</div>'}
-        </div>`).join('');
+          <div class="turn-issue-box">
+            <span class="sev-badge sev-${t.severity}">${t.severity} severity</span>
+            <div class="issue-prob">${t.problem}</div>
+            <div class="issue-fix">${t.better_response}</div>
+          </div>` : ''}
+        </div>
+      </div>`).join('');
 
-      result.classList.add('show');
-    } catch (e) {
-      error.textContent = '❌ ' + e.message;
-      error.classList.add('show');
-    } finally {
-      loading.style.display = 'none';
-      btn.disabled = false;
-    }
+    rs.classList.add('show');
+    loadReports();
+  } catch(e) {
+    showErr('de', 'Error: ' + e.message);
+  } finally {
+    ld.classList.remove('show');
+    document.getElementById('dbtn').disabled = false;
   }
+}
 
-  // ── SCENARIOS ──
-  async function runScenarios() {
-    const desc = document.getElementById('scenario-input').value.trim();
-    const loading = document.getElementById('scenario-loading');
-    const result = document.getElementById('scenario-result');
-    const error = document.getElementById('scenario-error');
+/* ─── SCENARIOS ──────────────────────────── */
+async function runScenarios() {
+  const desc = document.getElementById('sc-input').value.trim();
+  const ld   = document.getElementById('sl');
+  const er   = document.getElementById('se');
+  const rs   = document.getElementById('sr');
 
-    if (!desc) {
-      error.textContent = '❌ Please describe your AI agent first.';
-      error.classList.add('show');
+  if (!desc) { showErr('se', 'Please describe your AI agent first.'); return; }
+
+  ld.classList.add('show'); rs.classList.remove('show'); er.classList.remove('show');
+
+  try {
+    const r = await fetch(API + '/scenarios', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ agent_description: desc })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Request failed');
+
+    const sc = d.scenarios || [];
+    document.getElementById('sr-count').textContent = sc.length + ' scenarios';
+
+    const groups = { NORMAL:[], EDGE:[], ADVERSARIAL:[] };
+    sc.forEach(s => { if (groups[s.type]) groups[s.type].push(s); });
+
+    const labels = { NORMAL:'Normal', EDGE:'Edge Cases', ADVERSARIAL:'Adversarial' };
+    const cls    = { NORMAL:'sg-normal', EDGE:'sg-edge', ADVERSARIAL:'sg-adversarial' };
+
+    document.getElementById('sr-body').innerHTML = Object.entries(groups).map(([type, items]) => `
+      <div class="${cls[type]}">
+        <div class="sg-hdr">${labels[type]}</div>
+        ${items.map(s => `
+          <div class="sc-item">
+            <div class="sc-id">#${s.id} · ${s.type}</div>
+            <div class="sc-user">${s.user_input}</div>
+            <div class="sc-exp">${s.expected_behavior}</div>
+          </div>`).join('')}
+      </div>`).join('');
+
+    rs.classList.add('show');
+  } catch(e) {
+    showErr('se', 'Error: ' + e.message);
+  } finally {
+    ld.classList.remove('show');
+  }
+}
+
+/* ─── REPORTS ────────────────────────────── */
+async function loadReports() {
+  try {
+    const r = await fetch(API + '/reports');
+    const d = await r.json();
+    const el = document.getElementById('rpt-list');
+    if (!d.reports.length) {
+      el.innerHTML = '<div style="color:var(--ink3);font-size:14px;padding:20px 0;">No reports yet. Run an analysis first.</div>';
       return;
     }
-
-    loading.style.display = 'block';
-    result.classList.remove('show');
-    error.classList.remove('show');
-
-    try {
-      const res = await fetch(API + '/scenarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agent_description: desc })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Failed');
-
-      const scenarios = data.scenarios || [];
-      document.getElementById('scenario-count').textContent = scenarios.length + ' scenarios';
-
-      const groups = { NORMAL: [], EDGE: [], ADVERSARIAL: [] };
-      scenarios.forEach(s => { if (groups[s.type]) groups[s.type].push(s); });
-
-      const labels = { NORMAL: '✅ Normal', EDGE: '⚠️ Edge Cases', ADVERSARIAL: '🔴 Adversarial' };
-
-      document.getElementById('scenario-groups').innerHTML = Object.entries(groups).map(([type, items]) => `
-        <div class="scenario-group type-${type}">
-          <div class="scenario-group-title">${labels[type]}</div>
-          ${items.map(s => `
-            <div class="scenario-item">
-              <div class="scenario-item-id">#${s.id}</div>
-              <div class="scenario-user">💬 ${s.user_input}</div>
-              <div class="scenario-expected">Expected: ${s.expected_behavior}</div>
-            </div>`).join('')}
-        </div>`).join('');
-
-      result.classList.add('show');
-    } catch (e) {
-      error.textContent = '❌ ' + e.message;
-      error.classList.add('show');
-    } finally {
-      loading.style.display = 'none';
-    }
+    el.innerHTML = d.reports.map(f => `
+      <div class="rpt-item">
+        <div class="rpt-icon">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+        </div>
+        <span class="rpt-name">${f}</span>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <button onclick="viewReport('${f}')" style="padding:5px 14px;background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-mid);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);">View</button>
+          <button onclick="deleteReport('${f}', this)" style="padding:5px 14px;background:var(--red-lt);color:var(--red);border:1px solid #FECACA;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('rpt-list').innerHTML = '<div style="color:var(--red);font-size:14px;">Could not load reports.</div>';
   }
+}
 
-  // ── REPORTS ──
-  async function loadReports() {
-    try {
-      const res = await fetch(API + '/reports');
-      const data = await res.json();
-      const list = document.getElementById('reports-list');
-      if (data.reports.length === 0) {
-        list.innerHTML = '<p style="color:#555;font-size:14px;">No reports saved yet. Run an analysis first.</p>';
-        return;
-      }
-      list.innerHTML = data.reports.map(r => `
-        <div class="report-item">
-          <div class="report-name">📄 ${r}</div>
-        </div>`).join('');
-    } catch (e) {
-      document.getElementById('reports-list').innerHTML = '<p style="color:#ef4444;">Could not load reports.</p>';
+let currentReportData = null;
+let currentReportFilename = null;
+
+async function viewReport(filename) {
+  try {
+    const r = await fetch(API + '/reports/' + filename);
+    const d = await r.json();
+    currentReportData = d;
+    currentReportFilename = filename;
+
+    document.getElementById('report-viewer-title').textContent = filename;
+
+    const body = document.getElementById('report-viewer-body');
+
+    // Detect report type and render accordingly
+    if (Array.isArray(d)) {
+      // Debug report — array of turns
+      document.getElementById('report-viewer-type').textContent = 'Turn-by-Turn Debug Report';
+      body.innerHTML = renderDebugReport(d);
+
+    } else if (d.scenarios) {
+      // Scenarios report
+      document.getElementById('report-viewer-type').textContent = 'Scenario Generator Report · ' + d.total_scenarios + ' scenarios';
+      body.innerHTML = renderScenariosReport(d);
+
+    } else if (d.best_conversation) {
+      // Comparison report
+      document.getElementById('report-viewer-type').textContent = 'Batch Comparison Report';
+      body.innerHTML = renderComparisonReport(d);
+
+    } else if (d.tone_score !== undefined) {
+      // Single analysis report
+      document.getElementById('report-viewer-type').textContent = 'Conversation Analysis Report';
+      body.innerHTML = renderAnalysisReport(d);
+
+    } else {
+      // Fallback — raw JSON
+      document.getElementById('report-viewer-type').textContent = 'JSON Report';
+      body.innerHTML = `<pre style="font-size:13px;line-height:1.7;color:var(--ink2);white-space:pre-wrap;word-break:break-word;">${JSON.stringify(d, null, 2)}</pre>`;
     }
-  }
 
-  // ── DRAG AND DROP ──
-  ['analyze', 'debug'].forEach(type => {
-    const zone = document.getElementById(type + '-zone');
-    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
-    zone.addEventListener('drop', e => {
-      e.preventDefault();
-      zone.classList.remove('drag');
-      const input = document.getElementById(type + '-file');
-      input.files = e.dataTransfer.files;
-      fileSelected(type);
-    });
+    document.getElementById('report-viewer').style.display = 'flex';
+  } catch(e) {
+    alert('Could not load report: ' + e.message);
+  }
+}
+
+function renderAnalysisReport(d) {
+  const scoreColor = v => v >= 7 ? 'var(--green)' : v >= 4 ? 'var(--amber)' : 'var(--red)';
+  const riskColor  = r => r === 'low' ? 'var(--green)' : r === 'medium' ? 'var(--amber)' : 'var(--red)';
+  const riskBg     = r => r === 'low' ? 'var(--green-lt)' : r === 'medium' ? 'var(--amber-lt)' : 'var(--red-lt)';
+  const risk = (d.hallucination_risk || '').toLowerCase();
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;">
+        <div style="font-family:var(--serif);font-size:36px;font-weight:700;color:${scoreColor(d.tone_score)};line-height:1;">${d.tone_score}/10</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:6px;font-weight:500;">Tone Score</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;">
+        <div style="font-family:var(--serif);font-size:36px;font-weight:700;color:${scoreColor(d.resolution_score)};line-height:1;">${d.resolution_score}/10</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:6px;font-weight:500;">Resolution Score</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="background:${riskBg(risk)};color:${riskColor(risk)};padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;">${risk.charAt(0).toUpperCase()+risk.slice(1)}</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:8px;font-weight:500;">Hallucination Risk</div>
+      </div>
+    </div>
+    ${infoBlock('Summary', d.overall_summary)}
+    ${infoBlock('Recommendation', d.recommendation)}
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:10px;">Missed Opportunities</div>
+      ${(d.missed_opportunities||[]).map(o=>`
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-size:14px;color:var(--ink2);line-height:1.5;">
+          <span style="width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0;margin-top:7px;"></span>${o}
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderDebugReport(turns) {
+  return turns.map(t => `
+    <div style="border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border);">
+        <span style="font-size:12px;font-weight:600;color:var(--ink3);">Turn ${t.turn}</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;${t.issue_detected ? 'background:var(--red-lt);color:var(--red);border:1px solid #FECACA;' : 'background:var(--green-lt);color:var(--green);border:1px solid #A7F3D0;'}">${t.issue_detected ? 'Issue detected' : 'Clean'}</span>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="margin-bottom:8px;">
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--blue);margin-bottom:3px;">User</div>
+          <div style="font-size:14px;color:var(--ink2);line-height:1.6;">${t.user_message}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink4);margin-bottom:3px;">Agent</div>
+          <div style="font-size:14px;color:var(--ink2);line-height:1.6;">${t.agent_message}</div>
+        </div>
+        ${t.issue_detected ? `
+        <div style="margin-top:12px;padding:14px;background:var(--red-lt);border:1px solid #FECACA;border-radius:8px;">
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 10px;border-radius:4px;background:#FECACA;color:var(--red);display:inline-block;margin-bottom:8px;">${t.severity} severity</span>
+          <div style="font-size:13px;color:var(--ink2);margin-bottom:8px;line-height:1.6;">${t.problem}</div>
+          <div style="font-size:13px;color:var(--blue);line-height:1.6;padding-top:8px;border-top:1px solid #FECACA;">→ ${t.better_response}</div>
+        </div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function renderScenariosReport(d) {
+  const groups = { NORMAL:[], EDGE:[], ADVERSARIAL:[] };
+  (d.scenarios||[]).forEach(s => { if(groups[s.type]) groups[s.type].push(s); });
+  const labels = { NORMAL:'Normal', EDGE:'Edge Cases', ADVERSARIAL:'Adversarial' };
+  const colors = { NORMAL:'var(--green)', EDGE:'var(--amber)', ADVERSARIAL:'var(--red)' };
+  return Object.entries(groups).map(([type, items]) => `
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:${colors[type]};margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        ${labels[type]}
+        <span style="flex:1;height:1px;background:var(--border);display:block;"></span>
+      </div>
+      ${items.map(s=>`
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:600;color:var(--ink4);margin-bottom:5px;">#${s.id} · ${s.type}</div>
+          <div style="font-size:14px;color:var(--ink);font-weight:500;margin-bottom:4px;line-height:1.5;">${s.user_input}</div>
+          <div style="font-size:13px;color:var(--ink3);line-height:1.5;"><span style="font-weight:600;">Expected:</span> ${s.expected_behavior}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function renderComparisonReport(d) {
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="background:var(--green-lt);border:1px solid #A7F3D0;border-radius:10px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Best Conversation</div>
+        <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;">${d.best_conversation}</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${d.best_reason}</div>
+      </div>
+      <div style="background:var(--red-lt);border:1px solid #FECACA;border-radius:10px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--red);margin-bottom:6px;">Worst Conversation</div>
+        <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;">${d.worst_conversation}</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${d.worst_reason}</div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink4);margin-bottom:10px;">Key Insights</div>
+      ${(d.overall_insights||[]).map(i=>`
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;font-size:14px;color:var(--ink2);line-height:1.5;">
+          <span style="width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0;margin-top:7px;"></span>${i}
+        </div>`).join('')}
+    </div>
+    ${infoBlock('Team Recommendation', d.team_recommendation)}`;
+}
+
+function infoBlock(label, text) {
+  return `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:10px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">${label}</div>
+      <div style="font-size:14px;color:var(--ink2);line-height:1.7;">${text}</div>
+    </div>`;
+}
+
+function downloadReport() {
+  if (!currentReportData || !currentReportFilename) return;
+  const blob = new Blob([JSON.stringify(currentReportData, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = currentReportFilename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function closeViewer() {
+  document.getElementById('report-viewer').style.display = 'none';
+  currentReportData = null;
+  currentReportFilename = null;
+}
+
+async function deleteReport(filename, btn) {
+  if (!confirm(`Delete "${filename}"? This cannot be undone.`)) return;
+  try {
+    const r = await fetch(API + '/reports/' + filename, { method: 'DELETE' });
+    if (!r.ok) throw new Error('Delete failed');
+    // Remove the row from the list immediately
+    btn.closest('.rpt-item').remove();
+    // If list is now empty, show the empty state
+    const list = document.getElementById('rpt-list');
+    if (!list.querySelector('.rpt-item')) {
+      list.innerHTML = '<div style="color:var(--ink3);font-size:14px;padding:20px 0;">No reports yet. Run an analysis first.</div>';
+    }
+  } catch(e) {
+    alert('Could not delete report: ' + e.message);
+  }
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('report-viewer')) closeViewer();
+}
+
+/* ─── DRAG & DROP ────────────────────────── */
+[['af','az','af-name','abtn'], ['df','dz','df-name','dbtn']].forEach(([inputId, zoneId, nameId, btnId]) => {
+  const zone = document.getElementById(zoneId);
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    document.getElementById(inputId).files = e.dataTransfer.files;
+    onFile(inputId, zoneId, nameId, btnId);
   });
+});
 </script>
+<!-- REPORT VIEWER MODAL -->
+<div id="report-viewer" onclick="handleOverlayClick(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;">
+  <div id="report-viewer-box" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:720px;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);margin:auto;">
+
+    <!-- Modal header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);background:var(--surface2);border-radius:14px 14px 0 0;">
+      <div>
+        <div id="report-viewer-title" style="font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);"></div>
+        <div id="report-viewer-type" style="font-size:12px;color:var(--ink4);margin-top:2px;"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="downloadReport()" id="download-btn" style="padding:7px 16px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);">↓ Download</button>
+        <button onclick="closeViewer()" style="padding:7px 14px;background:var(--surface3);border:1px solid var(--border);border-radius:7px;font-size:13px;cursor:pointer;color:var(--ink3);font-family:var(--sans);">Close</button>
+      </div>
+    </div>
+
+    <!-- Modal body -->
+    <div id="report-viewer-body" style="padding:24px;overflow-y:auto;max-height:70vh;"></div>
+
+  </div>
+</div>
+</div>
 </body>
 </html>
