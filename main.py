@@ -1,4 +1,5 @@
 from debugger import run_debugger
+from scenario_generator import run_scenario_generator
 import os
 import json
 from groq import Groq
@@ -9,12 +10,10 @@ load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def load_conversation(filepath):
-    """Reads a conversation text file and returns its content."""
     with open(filepath, "r") as f:
         return f.read()
 
 def analyze_conversation(conversation_text):
-    """Sends conversation to Groq AI and gets back a structured quality report."""
     prompt = f"""
 You are an expert AI conversation quality evaluator.
 
@@ -32,7 +31,6 @@ Analyze this conversation and return ONLY valid JSON, nothing else:
 Conversation to analyze:
 {conversation_text}
 """
-
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
@@ -47,18 +45,15 @@ Conversation to analyze:
         ],
         temperature=0.3
     )
-
     return response.choices[0].message.content
 
 def save_report(report_data, output_path):
-    """Saves individual JSON report to reports/ folder."""
     os.makedirs("reports", exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(report_data, f, indent=2)
     print(f"  Report saved → {output_path}")
 
 def print_summary(filename, report_data):
-    """Prints a clean readable summary to the terminal."""
     print("\n" + "="*55)
     print(f"AGENTLENS — REPORT: {filename}")
     print("="*55)
@@ -73,16 +68,10 @@ def print_summary(filename, report_data):
     print("="*55)
 
 def generate_comparison(all_reports):
-    """
-    Takes all individual reports and asks AI to compare them.
-    Returns a final comparison summary.
-    """
     print("\nGenerating comparison report...")
-
     reports_text = json.dumps(all_reports, indent=2)
-
     prompt = f"""
-You are an AI quality analyst. 
+You are an AI quality analyst.
 
 Here are quality reports for multiple customer service conversations:
 
@@ -99,7 +88,6 @@ Compare all conversations and return ONLY valid JSON:
   "team_recommendation": "<one recommendation for the whole support team>"
 }}
 """
-
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
@@ -114,11 +102,9 @@ Compare all conversations and return ONLY valid JSON:
         ],
         temperature=0.3
     )
-
     return response.choices[0].message.content
 
 def print_comparison(comparison):
-    """Prints the final comparison report."""
     print("\n" + "*"*55)
     print("AGENTLENS — FINAL COMPARISON REPORT")
     print("*"*55)
@@ -132,20 +118,26 @@ def print_comparison(comparison):
     print(f"\n  Team Recommendation: {comparison['team_recommendation']}")
     print("*"*55 + "\n")
 
-def main():
-    conversations_folder = "sample_conversations"
+def run_analysis_pipeline(conversations_folder="sample_conversations"):
+    """Runs batch analysis + comparison on all conversations in the folder."""
     all_reports = {}
 
-    # Get all .txt files in the folder
+    if not os.path.exists(conversations_folder):
+        print(f"Folder '{conversations_folder}' not found. Skipping analysis.")
+        return all_reports
+
     conversation_files = [
         f for f in os.listdir(conversations_folder)
         if f.endswith(".txt")
     ]
 
+    if not conversation_files:
+        print("No .txt conversation files found. Skipping analysis.")
+        return all_reports
+
     print(f"\nFound {len(conversation_files)} conversations to analyze.")
     print("="*55)
 
-    # Analyze each conversation one by one
     for filename in conversation_files:
         filepath = os.path.join(conversations_folder, filename)
         print(f"\nAnalyzing: {filename}")
@@ -162,16 +154,12 @@ def main():
             continue
 
         print_summary(filename, report)
-
         report_name = filename.replace(".txt", "_report.json")
         save_report(report, f"reports/{report_name}")
-
         all_reports[filename] = report
 
-    # Generate final comparison across all conversations
     if len(all_reports) > 1:
         raw_comparison = generate_comparison(all_reports)
-
         try:
             cleaned = raw_comparison.strip().strip("```json").strip("```").strip()
             comparison = json.loads(cleaned)
@@ -181,13 +169,86 @@ def main():
         except json.JSONDecodeError:
             print("Error parsing comparison response.")
             print("Raw:", raw_comparison)
-            
-    print("\n" + "="*60)
-    print("RUNNING TURN-BY-TURN DEBUGGER ON ALL CONVERSATIONS")
-    print("="*60)
+
+    return all_reports
+
+def run_debugger_pipeline(conversations_folder="sample_conversations"):
+    """Runs turn-by-turn debugger on all conversations."""
+    if not os.path.exists(conversations_folder):
+        print(f"Folder '{conversations_folder}' not found. Skipping debugger.")
+        return
+
+    conversation_files = [
+        f for f in os.listdir(conversations_folder)
+        if f.endswith(".txt")
+    ]
+
+    if not conversation_files:
+        print("No .txt files found. Skipping debugger.")
+        return
+
+    print("\n" + "="*55)
+    print("RUNNING TURN-BY-TURN DEBUGGER")
+    print("="*55)
+
     for filename in conversation_files:
         filepath = os.path.join(conversations_folder, filename)
         run_debugger(filepath)
+
+def run_scenario_pipeline():
+    """Asks user for agent description and generates test scenarios."""
+    print("\n" + "="*55)
+    print("SCENARIO GENERATOR")
+    print("="*55)
+    print("Describe the AI agent you want to test.")
+    print("Example: A customer support agent for an e-commerce store")
+    print()
+    agent_description = input("Agent description: ").strip()
+
+    if not agent_description:
+        print("No description provided. Skipping scenario generation.")
+        return
+
+    run_scenario_generator(agent_description)
+
+def print_menu():
+    print("\n" + "="*55)
+    print("  AGENTLENS — AI Agent Testing & Evaluation Tool")
+    print("="*55)
+    print("  What do you want to do?\n")
+    print("  [1] Analyze conversations (batch + comparison)")
+    print("  [2] Debug conversations turn-by-turn")
+    print("  [3] Generate test scenarios for an AI agent")
+    print("  [4] Run everything (full pipeline)")
+    print("  [0] Exit")
+    print("="*55)
+
+def main():
+    while True:
+        print_menu()
+        choice = input("\nEnter choice (0-4): ").strip()
+
+        if choice == "1":
+            run_analysis_pipeline()
+
+        elif choice == "2":
+            run_debugger_pipeline()
+
+        elif choice == "3":
+            run_scenario_pipeline()
+
+        elif choice == "4":
+            print("\nRunning full AgentLens pipeline...\n")
+            run_analysis_pipeline()
+            run_debugger_pipeline()
+            run_scenario_pipeline()
+
+        elif choice == "0":
+            print("\nExiting AgentLens. Goodbye!\n")
+            break
+
+        else:
+            print("\nInvalid choice. Please enter 0, 1, 2, 3, or 4.")
 
 if __name__ == "__main__":
     main()

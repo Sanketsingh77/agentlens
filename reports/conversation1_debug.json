@@ -23,8 +23,8 @@
     "agent_message": "Please check your spam folder as well.",
     "issue_detected": true,
     "severity": "LOW",
-    "problem": "The agent's response does not acknowledge the user's concern or provide additional assistance, it simply redirects the user to check another location without offering help or alternative solutions.",
-    "better_response": "I apologize you're having trouble finding the email. Could you please check your spam folder as well? If you're still unable to find it, I can try resending the email or providing more information to help you locate it."
+    "problem": "The agent's response does not ask for additional information about the missing email, such as when it was supposed to be sent or what it was about.",
+    "better_response": "Can you please tell me more about the email you're missing, such as when you were expecting to receive it or what it was about? I'll do my best to help you locate it. Also, have you checked your spam folder?"
   },
   {
     "turn": 4,
