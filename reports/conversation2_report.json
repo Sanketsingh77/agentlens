@@ -1,0 +1,11 @@
+{
+  "tone_score": 2,
+  "resolution_score": 1,
+  "hallucination_risk": "low",
+  "missed_opportunities": [
+    "acknowledging user's frustration",
+    "providing a clear solution or alternative"
+  ],
+  "overall_summary": "The conversation was unhelpful and lacked empathy, with the agent failing to provide a clear solution or acknowledge the user's frustration. The user's issue with their order remains unresolved, leading to a negative experience.",
+  "recommendation": "The agent should be trained to provide empathetic responses and clear solutions, such as offering to escalate the issue or providing a specific timeline for when the package can be expected to arrive."
+}

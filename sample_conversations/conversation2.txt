@@ -1,0 +1,12 @@
+User: Hello I need help with my order
+Agent: What do you want?
+User: My package hasn't arrived yet, it's been 2 weeks
+Agent: Orders take time. Wait more.
+User: But it was supposed to arrive in 3 days
+Agent: I don't know about that.
+User: Can you check the tracking?
+Agent: I can't do that right now.
+User: Who can help me then?
+Agent: Someone else maybe.
+User: This is really frustrating
+Agent: Okay.
