@@ -1,0 +1,47 @@
+[
+  {
+    "turn": 1,
+    "user_message": "Hi, I need help resetting my password.",
+    "agent_message": "Sure! Can you provide your email address?",
+    "issue_detected": false,
+    "severity": "NONE",
+    "problem": "None",
+    "better_response": "Response was good"
+  },
+  {
+    "turn": 2,
+    "user_message": "Yes it's sanket@email.com",
+    "agent_message": "I've sent a reset link to that email. Check your inbox.",
+    "issue_detected": false,
+    "severity": "NONE",
+    "problem": "None",
+    "better_response": "Response was good"
+  },
+  {
+    "turn": 3,
+    "user_message": "I don't see any email.",
+    "agent_message": "Please check your spam folder as well.",
+    "issue_detected": true,
+    "severity": "LOW",
+    "problem": "The agent's response does not acknowledge the user's concern or provide additional assistance, it simply redirects the user to check another location without offering help or alternative solutions.",
+    "better_response": "I apologize you're having trouble finding the email. Could you please check your spam folder as well? If you're still unable to find it, I can try resending the email or providing more information to help you locate it."
+  },
+  {
+    "turn": 4,
+    "user_message": "Found it! Thanks.",
+    "agent_message": "You're welcome! Is there anything else I can help you with?",
+    "issue_detected": false,
+    "severity": "NONE",
+    "problem": "None",
+    "better_response": "Response was good"
+  },
+  {
+    "turn": 5,
+    "user_message": "No that's all.",
+    "agent_message": "Have a great day!",
+    "issue_detected": false,
+    "severity": "NONE",
+    "problem": "None",
+    "better_response": "Response was good"
+  }
+]

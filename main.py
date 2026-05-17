@@ -1,3 +1,4 @@
+from debugger import run_debugger
 import os
 import json
 from groq import Groq
@@ -180,6 +181,13 @@ def main():
         except json.JSONDecodeError:
             print("Error parsing comparison response.")
             print("Raw:", raw_comparison)
+            
+    print("\n" + "="*60)
+    print("RUNNING TURN-BY-TURN DEBUGGER ON ALL CONVERSATIONS")
+    print("="*60)
+    for filename in conversation_files:
+        filepath = os.path.join(conversations_folder, filename)
+        run_debugger(filepath)
 
 if __name__ == "__main__":
     main()

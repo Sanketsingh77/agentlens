@@ -6,6 +6,6 @@
     "acknowledging user's frustration",
     "providing a clear solution or alternative"
   ],
-  "overall_summary": "The conversation was unhelpful and lacked empathy, with the agent failing to provide a clear solution or acknowledge the user's frustration. The user's issue with their order remains unresolved, leading to a negative experience.",
-  "recommendation": "The agent should be trained to provide empathetic responses and clear solutions, such as offering to escalate the issue or providing a specific timeline for when the package can be expected to arrive."
+  "overall_summary": "The conversation was unhelpful and lacked empathy, with the agent failing to provide a resolution or clear guidance. The user's concerns and frustration were not adequately addressed, leading to a negative experience.",
+  "recommendation": "The agent should be trained to actively listen to the user's concerns, provide empathetic responses, and offer concrete solutions or alternatives to resolve the issue."
 }

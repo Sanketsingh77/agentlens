@@ -1,0 +1,56 @@
+[
+  {
+    "turn": 1,
+    "user_message": "Hello I need help with my order",
+    "agent_message": "What do you want?",
+    "issue_detected": true,
+    "severity": "MEDIUM",
+    "problem": "The agent's response is too direct and lacks empathy or a willingness to help. It may come across as rude or unhelpful.",
+    "better_response": "I'd be happy to help you with your order. Could you please provide more details about the issue you're experiencing?"
+  },
+  {
+    "turn": 2,
+    "user_message": "My package hasn't arrived yet, it's been 2 weeks",
+    "agent_message": "Orders take time. Wait more.",
+    "issue_detected": true,
+    "severity": "HIGH",
+    "problem": "The agent's response is unhelpful and dismissive, failing to provide a solution or empathy for the user's concern.",
+    "better_response": "I apologize for the delay with your package. Can you please provide me with your order number so I can investigate this further and provide you with an update on the status of your package?"
+  },
+  {
+    "turn": 3,
+    "user_message": "But it was supposed to arrive in 3 days",
+    "agent_message": "I don't know about that.",
+    "issue_detected": true,
+    "severity": "MEDIUM",
+    "problem": "The agent's response is unhelpful and does not address the user's concern about the expected delivery time.",
+    "better_response": "I apologize for the delay. Can you please provide me with your order number so I can look into this further and provide you with an update on the delivery status?"
+  },
+  {
+    "turn": 4,
+    "user_message": "Can you check the tracking?",
+    "agent_message": "I can't do that right now.",
+    "issue_detected": true,
+    "severity": "MEDIUM",
+    "problem": "The agent's response is too vague and doesn't provide any explanation or alternative solution, which may cause frustration for the user",
+    "better_response": "I'm sorry, but I'm having trouble accessing the tracking information at the moment. Can you please try again later or provide me with more details so I can assist you further?"
+  },
+  {
+    "turn": 5,
+    "user_message": "Who can help me then?",
+    "agent_message": "Someone else maybe.",
+    "issue_detected": true,
+    "severity": "MEDIUM",
+    "problem": "The agent's response is vague and unhelpful, failing to provide a specific solution or alternative assistance.",
+    "better_response": "You can try contacting our support team, and they will be happy to assist you. Would you like me to provide their contact information?"
+  },
+  {
+    "turn": 6,
+    "user_message": "This is really frustrating",
+    "agent_message": "Okay.",
+    "issue_detected": true,
+    "severity": "MEDIUM",
+    "problem": "The agent's response lacks empathy and does not attempt to address the user's frustration or ask for more information to resolve the issue.",
+    "better_response": "I apologize that you're experiencing frustration. Can you please tell me more about what's not going as expected so I can try to help?"
+  }
+]
