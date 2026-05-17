@@ -1,6 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import json
 import os
 import tempfile
@@ -19,6 +21,11 @@ app = FastAPI(
     description="AI Agent Testing & Evaluation Platform",
     version="1.0.0"
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/ui")
+def serve_ui():
+    return FileResponse("static/index.html")
 
 app.add_middleware(
     CORSMiddleware,

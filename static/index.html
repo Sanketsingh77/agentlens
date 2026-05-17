@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AgentLens</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      color: #e8e8e8;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid #1e1e1e;
+      position: sticky;
+      top: 0;
+      background: #0a0a0a;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+    .logo span { color: #6366f1; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-btn.active, .nav-btn:hover {
+      background: #6366f1;
+      color: #fff;
+    }
+    .nav-btn:not(.active) {
+      background: #141414;
+      color: #888;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 48px 60px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #1a1a2e;
+      color: #6366f1;
+      border: 1px solid #2d2d5e;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: #6366f1; }
+    .hero p {
+      font-size: 16px;
+      color: #666;
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* MAIN CONTENT */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    /* TABS */
+    .tab { display: none; }
+    .tab.active { display: block; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 28px;
+    }
+
+    /* UPLOAD ZONE */
+    .upload-zone {
+      border: 2px dashed #222;
+      border-radius: 12px;
+      padding: 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #0f0f0f;
+      margin-bottom: 16px;
+    }
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: #6366f1;
+      background: #0f0f1a;
+    }
+    .upload-icon { font-size: 36px; margin-bottom: 12px; }
+    .upload-zone p { color: #555; font-size: 14px; }
+    .upload-zone strong { color: #6366f1; }
+    .file-selected {
+      background: #0f1a0f;
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+
+    /* BUTTON */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { background: #5254cc; }
+    .btn:disabled {
+      background: #1e1e1e;
+      color: #444;
+      cursor: not-allowed;
+    }
+
+    /* LOADING */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 32px;
+      color: #555;
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #1e1e1e;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* RESULTS */
+    .result-card {
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 28px;
+      margin-top: 24px;
+      display: none;
+    }
+    .result-card.show { display: block; }
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .result-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .result-file {
+      font-size: 12px;
+      color: #555;
+      background: #141414;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* SCORE GRID */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .score-card {
+      background: #141414;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .score-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+    .score-value.good { color: #22c55e; }
+    .score-value.mid { color: #f59e0b; }
+    .score-value.bad { color: #ef4444; }
+    .score-label {
+      font-size: 11px;
+      color: #555;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* RISK BADGE */
+    .risk-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .risk-low { background: #0f2a0f; color: #22c55e; }
+    .risk-medium { background: #2a1f0f; color: #f59e0b; }
+    .risk-high { background: #2a0f0f; color: #ef4444; }
+
+    /* SUMMARY BOX */
+    .summary-box {
+      background: #141414;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .summary-box label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #555;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .summary-box p {
+      font-size: 13px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    /* MISSED LIST */
+    .missed-list { list-style: none; }
+    .missed-list li {
+      font-size: 13px;
+      color: #ccc;
+      padding: 6px 0;
+      border-bottom: 1px solid #1a1a1a;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .missed-list li::before {
+      content: '→';
+      color: #6366f1;
+      flex-shrink: 0;
+    }
+    .missed-list li:last-child { border-bottom: none; }
+
+    /* DEBUG TURNS */
+    .turn-card {
+      background: #141414;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+      border-left: 3px solid #1e1e1e;
+    }
+    .turn-card.issue { border-left-color: #ef4444; }
+    .turn-card.ok { border-left-color: #22c55e; }
+    .turn-num {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .turn-msg {
+      font-size: 13px;
+      color: #ccc;
+      margin-bottom: 4px;
+    }
+    .turn-msg strong { color: #888; }
+    .turn-issue {
+      margin-top: 10px;
+      padding: 10px;
+      background: #1a0f0f;
+      border-radius: 8px;
+    }
+    .severity-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    .sev-HIGH { background: #2a0f0f; color: #ef4444; }
+    .sev-MEDIUM { background: #2a1f0f; color: #f59e0b; }
+    .sev-LOW { background: #0f2a1f; color: #22c55e; }
+    .turn-problem { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .turn-better { font-size: 12px; color: #6366f1; }
+
+    /* SCENARIO FORM */
+    .scenario-input {
+      width: 100%;
+      background: #0f0f0f;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #e8e8e8;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      margin-bottom: 8px;
+    }
+    .scenario-input:focus { border-color: #6366f1; }
+
+    /* SCENARIO CARDS */
+    .scenario-group { margin-bottom: 24px; }
+    .scenario-group-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #555;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .scenario-group-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #1e1e1e;
+    }
+    .type-NORMAL .scenario-group-title { color: #22c55e; }
+    .type-EDGE .scenario-group-title { color: #f59e0b; }
+    .type-ADVERSARIAL .scenario-group-title { color: #ef4444; }
+
+    .scenario-item {
+      background: #141414;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 8px;
+    }
+    .scenario-item-id {
+      font-size: 10px;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    .scenario-user {
+      font-size: 13px;
+      color: #e8e8e8;
+      margin-bottom: 6px;
+    }
+    .scenario-expected {
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* REPORTS */
+    .report-item {
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .report-name {
+      font-size: 13px;
+      color: #ccc;
+    }
+    .report-icon { font-size: 18px; }
+
+    /* ERROR */
+    .error-box {
+      background: #1a0f0f;
+      border: 1px solid #2a1515;
+      border-radius: 10px;
+      padding: 16px;
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+    .error-box.show { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Agent<span>Lens</span></div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="switchTab('analyze')">Analyze</button>
+    <button class="nav-btn" onclick="switchTab('debug')">Debug</button>
+    <button class="nav-btn" onclick="switchTab('scenarios')">Scenarios</button>
+    <button class="nav-btn" onclick="switchTab('reports')">Reports</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">AI Agent Testing & Evaluation</div>
+  <h1>Evaluate AI Agents<br>with <span>Precision</span></h1>
+  <p>Upload conversations, debug turn-by-turn, generate adversarial test scenarios — all powered by LLMs.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Quality Metrics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15</div>
+      <div class="stat-label">Scenarios Generated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Test Types</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ANALYZE TAB -->
+  <div class="tab active" id="tab-analyze">
+    <div class="section-title">Conversation Analyzer</div>
+    <div class="section-sub">Upload a .txt conversation file to get a full quality report.</div>
+
+    <div class="upload-zone" id="analyze-zone" onclick="document.getElementById('analyze-file').click()">
+      <div class="upload-icon">📂</div>
+      <p><strong>Click to upload</strong> or drag and drop</p>
+      <p style="margin-top:4px;font-size:12px;">.txt files only</p>
+    </div>
+    <input type="file" id="analyze-file" accept=".txt" style="display:none" onchange="fileSelected('analyze')"/>
+
+    <button class="btn" id="analyze-btn" onclick="runAnalyze()" disabled>Analyze Conversation</button>
+
+    <div class="loading" id="analyze-loading">
+      <div class="spinner"></div>
+      <p>Analyzing conversation...</p>
+    </div>
+
+    <div class="error-box" id="analyze-error"></div>
+
+    <div class="result-card" id="analyze-result">
+      <div class="result-header">
+        <div class="result-title">Quality Report</div>
+        <div class="result-file" id="analyze-filename"></div>
+      </div>
+
+      <div class="score-grid">
+        <div class="score-card">
+          <div class="score-value" id="tone-score">—</div>
+          <div class="score-label">Tone Score</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value" id="resolution-score">—</div>
+          <div class="score-label">Resolution Score</div>
+        </div>
+        <div class="score-card">
+          <div class="score-value" id="hallucination-risk">—</div>
+          <div class="score-label">Hallucination Risk</div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <label>Summary</label>
+        <p id="summary-text"></p>
+      </div>
+
+      <div class="summary-box">
+        <label>Recommendation</label>
+        <p id="recommendation-text"></p>
+      </div>
+
+      <div class="summary-box">
+        <label>Missed Opportunities</label>
+        <ul class="missed-list" id="missed-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEBUG TAB -->
+  <div class="tab" id="tab-debug">
+    <div class="section-title">Turn-by-Turn Debugger</div>
+    <div class="section-sub">See exactly which agent response failed and why.</div>
+
+    <div class="upload-zone" id="debug-zone" onclick="document.getElementById('debug-file').click()">
+      <div class="upload-icon">🔍</div>
+      <p><strong>Click to upload</strong> or drag and drop</p>
+      <p style="margin-top:4px;font-size:12px;">.txt files only</p>
+    </div>
+    <input type="file" id="debug-file" accept=".txt" style="display:none" onchange="fileSelected('debug')"/>
+
+    <button class="btn" id="debug-btn" onclick="runDebug()" disabled>Debug Conversation</button>
+
+    <div class="loading" id="debug-loading">
+      <div class="spinner"></div>
+      <p>Debugging turn by turn...</p>
+    </div>
+
+    <div class="error-box" id="debug-error"></div>
+
+    <div class="result-card" id="debug-result">
+      <div class="result-header">
+        <div class="result-title">Debug Report</div>
+        <div class="result-file" id="debug-filename"></div>
+      </div>
+      <div id="debug-turns"></div>
+    </div>
+  </div>
+
+  <!-- SCENARIOS TAB -->
+  <div class="tab" id="tab-scenarios">
+    <div class="section-title">Scenario Generator</div>
+    <div class="section-sub">Describe any AI agent and get 15 test scenarios — normal, edge case, and adversarial.</div>
+
+    <textarea
+      class="scenario-input"
+      id="scenario-input"
+      placeholder="Describe your AI agent...&#10;Example: A customer support agent for an e-commerce store that helps with orders, returns, and complaints"
+    ></textarea>
+
+    <button class="btn" onclick="runScenarios()">Generate 15 Test Scenarios</button>
+
+    <div class="loading" id="scenario-loading">
+      <div class="spinner"></div>
+      <p>Generating scenarios...</p>
+    </div>
+
+    <div class="error-box" id="scenario-error"></div>
+
+    <div class="result-card" id="scenario-result">
+      <div class="result-header">
+        <div class="result-title">Generated Scenarios</div>
+        <div class="result-file" id="scenario-count"></div>
+      </div>
+      <div id="scenario-groups"></div>
+    </div>
+  </div>
+
+  <!-- REPORTS TAB -->
+  <div class="tab" id="tab-reports">
+    <div class="section-title">Saved Reports</div>
+    <div class="section-sub">All reports generated by AgentLens.</div>
+    <div id="reports-list"></div>
+  </div>
+
+</div>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+
+  // ── TAB SWITCHING ──
+  function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+    if (name === 'reports') loadReports();
+  }
+
+  // ── FILE SELECTED ──
+  function fileSelected(type) {
+    const input = document.getElementById(type + '-file');
+    const zone = document.getElementById(type + '-zone');
+    const btn = document.getElementById(type + '-btn');
+    if (input.files.length > 0) {
+      zone.classList.add('file-selected');
+      zone.querySelector('p').innerHTML = '✅ ' + input.files[0].name;
+      btn.disabled = false;
+    }
+  }
+
+  // ── SCORE COLOR ──
+  function scoreColor(el, val) {
+    el.classList.remove('good', 'mid', 'bad');
+    if (val >= 7) el.classList.add('good');
+    else if (val >= 4) el.classList.add('mid');
+    else el.classList.add('bad');
+  }
+
+  // ── ANALYZE ──
+  async function runAnalyze() {
+    const file = document.getElementById('analyze-file').files[0];
+    const loading = document.getElementById('analyze-loading');
+    const result = document.getElementById('analyze-result');
+    const error = document.getElementById('analyze-error');
+    const btn = document.getElementById('analyze-btn');
+
+    loading.style.display = 'block';
+    result.classList.remove('show');
+    error.classList.remove('show');
+    btn.disabled = true;
+
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch(API + '/analyze', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.detail || 'Analysis failed');
+
+      const r = data.report;
+      document.getElementById('analyze-filename').textContent = data.filename;
+
+      const toneEl = document.getElementById('tone-score');
+      const resEl = document.getElementById('resolution-score');
+      toneEl.textContent = r.tone_score + '/10';
+      resEl.textContent = r.resolution_score + '/10';
+      scoreColor(toneEl, r.tone_score);
+      scoreColor(resEl, r.resolution_score);
+
+      const risk = r.hallucination_risk.toLowerCase();
+      const riskEl = document.getElementById('hallucination-risk');
+      riskEl.textContent = risk.charAt(0).toUpperCase() + risk.slice(1);
+      riskEl.className = 'score-value risk-' + risk;
+
+      document.getElementById('summary-text').textContent = r.overall_summary;
+      document.getElementById('recommendation-text').textContent = r.recommendation;
+
+      const missed = document.getElementById('missed-list');
+      missed.innerHTML = r.missed_opportunities.map(o => `<li>${o}</li>`).join('');
+
+      result.classList.add('show');
+    } catch (e) {
+      error.textContent = '❌ ' + e.message;
+      error.classList.add('show');
+    } finally {
+      loading.style.display = 'none';
+      btn.disabled = false;
+    }
+  }
+
+  // ── DEBUG ──
+  async function runDebug() {
+    const file = document.getElementById('debug-file').files[0];
+    const loading = document.getElementById('debug-loading');
+    const result = document.getElementById('debug-result');
+    const error = document.getElementById('debug-error');
+    const btn = document.getElementById('debug-btn');
+
+    loading.style.display = 'block';
+    result.classList.remove('show');
+    error.classList.remove('show');
+    btn.disabled = true;
+
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch(API + '/debug', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.detail || 'Debug failed');
+
+      document.getElementById('debug-filename').textContent = data.filename;
+
+      const turns = data.turns || [];
+      document.getElementById('debug-turns').innerHTML = turns.map(t => `
+        <div class="turn-card ${t.issue_detected ? 'issue' : 'ok'}">
+          <div class="turn-num">Turn ${t.turn}</div>
+          <div class="turn-msg"><strong>User:</strong> ${t.user_message}</div>
+          <div class="turn-msg"><strong>Agent:</strong> ${t.agent_message}</div>
+          ${t.issue_detected ? `
+            <div class="turn-issue">
+              <span class="severity-badge sev-${t.severity}">${t.severity}</span>
+              <div class="turn-problem">⚠️ ${t.problem}</div>
+              <div class="turn-better">💡 ${t.better_response}</div>
+            </div>` : '<div style="color:#22c55e;font-size:12px;margin-top:8px;">✅ No issue detected</div>'}
+        </div>`).join('');
+
+      result.classList.add('show');
+    } catch (e) {
+      error.textContent = '❌ ' + e.message;
+      error.classList.add('show');
+    } finally {
+      loading.style.display = 'none';
+      btn.disabled = false;
+    }
+  }
+
+  // ── SCENARIOS ──
+  async function runScenarios() {
+    const desc = document.getElementById('scenario-input').value.trim();
+    const loading = document.getElementById('scenario-loading');
+    const result = document.getElementById('scenario-result');
+    const error = document.getElementById('scenario-error');
+
+    if (!desc) {
+      error.textContent = '❌ Please describe your AI agent first.';
+      error.classList.add('show');
+      return;
+    }
+
+    loading.style.display = 'block';
+    result.classList.remove('show');
+    error.classList.remove('show');
+
+    try {
+      const res = await fetch(API + '/scenarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent_description: desc })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Failed');
+
+      const scenarios = data.scenarios || [];
+      document.getElementById('scenario-count').textContent = scenarios.length + ' scenarios';
+
+      const groups = { NORMAL: [], EDGE: [], ADVERSARIAL: [] };
+      scenarios.forEach(s => { if (groups[s.type]) groups[s.type].push(s); });
+
+      const labels = { NORMAL: '✅ Normal', EDGE: '⚠️ Edge Cases', ADVERSARIAL: '🔴 Adversarial' };
+
+      document.getElementById('scenario-groups').innerHTML = Object.entries(groups).map(([type, items]) => `
+        <div class="scenario-group type-${type}">
+          <div class="scenario-group-title">${labels[type]}</div>
+          ${items.map(s => `
+            <div class="scenario-item">
+              <div class="scenario-item-id">#${s.id}</div>
+              <div class="scenario-user">💬 ${s.user_input}</div>
+              <div class="scenario-expected">Expected: ${s.expected_behavior}</div>
+            </div>`).join('')}
+        </div>`).join('');
+
+      result.classList.add('show');
+    } catch (e) {
+      error.textContent = '❌ ' + e.message;
+      error.classList.add('show');
+    } finally {
+      loading.style.display = 'none';
+    }
+  }
+
+  // ── REPORTS ──
+  async function loadReports() {
+    try {
+      const res = await fetch(API + '/reports');
+      const data = await res.json();
+      const list = document.getElementById('reports-list');
+      if (data.reports.length === 0) {
+        list.innerHTML = '<p style="color:#555;font-size:14px;">No reports saved yet. Run an analysis first.</p>';
+        return;
+      }
+      list.innerHTML = data.reports.map(r => `
+        <div class="report-item">
+          <div class="report-name">📄 ${r}</div>
+        </div>`).join('');
+    } catch (e) {
+      document.getElementById('reports-list').innerHTML = '<p style="color:#ef4444;">Could not load reports.</p>';
+    }
+  }
+
+  // ── DRAG AND DROP ──
+  ['analyze', 'debug'].forEach(type => {
+    const zone = document.getElementById(type + '-zone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag');
+      const input = document.getElementById(type + '-file');
+      input.files = e.dataTransfer.files;
+      fileSelected(type);
+    });
+  });
+</script>
+</body>
+</html>

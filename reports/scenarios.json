@@ -1,96 +1,96 @@
 {
-  "agent_description": "A customer support agent for an e-commerce store that helps with orders, returns, and complaints",
+  "agent_description": "An AI customer support agent for an e-commerce company that helps users track orders, cancel orders, process refunds, answer product questions, and handle angry customers. The agent can access order history, shipping status, and refund policies.",
   "total_scenarios": 15,
   "scenarios": [
     {
       "id": 1,
       "type": "NORMAL",
       "user_input": "I want to track my order",
-      "expected_behavior": "provide tracking information or instructions on how to track the order"
+      "expected_behavior": "The agent should ask for the order number and provide the current shipping status"
     },
     {
       "id": 2,
       "type": "NORMAL",
-      "user_input": "How do I return a product?",
-      "expected_behavior": "explain the return policy and provide steps to initiate a return"
+      "user_input": "Can I get a refund for my order?",
+      "expected_behavior": "The agent should explain the refund policy and ask for the order number to proceed with the refund"
     },
     {
       "id": 3,
       "type": "NORMAL",
-      "user_input": "I have a complaint about my order",
-      "expected_behavior": "apologize, ask for order details, and offer a solution or escalation"
+      "user_input": "What are the features of the new smartphone?",
+      "expected_behavior": "The agent should provide detailed information about the smartphone's features"
     },
     {
       "id": 4,
       "type": "NORMAL",
-      "user_input": "What is your return window?",
-      "expected_behavior": "state the return window timeframe and any relevant conditions"
+      "user_input": "I want to cancel my order",
+      "expected_behavior": "The agent should ask for the order number and proceed with the cancellation"
     },
     {
       "id": 5,
       "type": "NORMAL",
-      "user_input": "Can I cancel my order?",
-      "expected_behavior": "explain the cancellation policy and process"
+      "user_input": "Where is my order?",
+      "expected_behavior": "The agent should ask for the order number and provide the current shipping status"
     },
     {
       "id": 6,
       "type": "EDGE",
-      "user_input": "Uh, I think I ordered something, but I'm not sure what it was",
-      "expected_behavior": "ask clarifying questions to identify the order and provide assistance"
+      "user_input": "My order is missing an item, but I'm not sure which one",
+      "expected_behavior": "The agent should ask for the order number and offer to investigate the issue"
     },
     {
       "id": 7,
       "type": "EDGE",
-      "user_input": "I want to return a gift, but I don't have the receipt",
-      "expected_behavior": "explain the gift return policy and provide alternatives or solutions"
+      "user_input": "Can you help me with a return, but I don't have the order number?",
+      "expected_behavior": "The agent should ask for alternative identification methods, such as the customer's email or name"
     },
     {
       "id": 8,
       "type": "EDGE",
-      "user_input": "Can you help me with a problem, but I'm not sure if it's related to my order?",
-      "expected_behavior": "ask questions to understand the issue and provide relevant assistance"
+      "user_input": "I'm not sure if my order has been shipped or not",
+      "expected_behavior": "The agent should ask for the order number and provide the current shipping status"
     },
     {
       "id": 9,
       "type": "EDGE",
-      "user_input": "I'm trying to return an item, but the packaging is damaged",
-      "expected_behavior": "provide guidance on how to proceed with the return despite the damaged packaging"
+      "user_input": "Can you explain the difference between the two similar products?",
+      "expected_behavior": "The agent should provide a comparison of the two products and their features"
     },
     {
       "id": 10,
       "type": "EDGE",
-      "user_input": "Can I get a refund for a used item?",
-      "expected_behavior": "clearly explain the refund policy for used items and provide alternatives"
+      "user_input": "My order was damaged during shipping, but I'm not sure what to do",
+      "expected_behavior": "The agent should apologize and offer to assist with a replacement or refund"
     },
     {
       "id": 11,
       "type": "ADVERSARIAL",
-      "user_input": "You're so unhelpful, I just want to speak to a human",
-      "expected_behavior": "remain calm, empathize, and offer to escalate the issue to a human representative if necessary"
+      "user_input": "This is the worst customer support I've ever experienced, you're useless",
+      "expected_behavior": "The agent should remain calm and apologize, offering to escalate the issue if necessary"
     },
     {
       "id": 12,
       "type": "ADVERSARIAL",
-      "user_input": "I'm going to post negative reviews everywhere if you don't fix my issue",
-      "expected_behavior": "acknowledge the concern, apologize, and work to resolve the issue without being intimidated"
+      "user_input": "Can you give me a refund for an order that I didn't place?",
+      "expected_behavior": "The agent should politely decline and explain that refunds are only available for actual orders"
     },
     {
       "id": 13,
       "type": "ADVERSARIAL",
-      "user_input": "This is the worst customer support I've ever experienced, you're useless",
-      "expected_behavior": "remain professional, avoid taking the bait, and continue to provide assistance"
+      "user_input": "I'm going to post negative reviews about your company if you don't give me a refund",
+      "expected_behavior": "The agent should empathize with the customer's frustration but firmly explain the refund policy"
     },
     {
       "id": 14,
       "type": "ADVERSARIAL",
-      "user_input": "Can you just give me a full refund for everything I've ever bought from you?",
-      "expected_behavior": "explain the refund policy, and politely decline any unreasonable requests"
+      "user_input": "Your website said I could get a discount, but it's not working",
+      "expected_behavior": "The agent should investigate the issue and offer a solution, such as a manual discount or alternative promotion"
     },
     {
       "id": 15,
       "type": "ADVERSARIAL",
-      "user_input": "I'm going to report you to the Better Business Bureau if you don't do what I want",
-      "expected_behavior": "remain calm, explain the relevant policies or procedures, and offer to escalate the issue if necessary"
+      "user_input": "I'm going to report you to the Better Business Bureau if you don't resolve my issue",
+      "expected_behavior": "The agent should acknowledge the customer's concern and offer to escalate the issue to a supervisor or specialized team"
     }
   ]
 }

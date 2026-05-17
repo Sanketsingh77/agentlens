@@ -3,9 +3,9 @@
   "resolution_score": 1,
   "hallucination_risk": "low",
   "missed_opportunities": [
-    "offering empathy",
+    "acknowledging user's frustration",
     "providing a clear solution or alternative contact"
   ],
-  "overall_summary": "The conversation was unhelpful and frustrating for the user, with the agent failing to provide a clear solution or show empathy. The agent's responses were brief and uninformative, leading to a negative experience for the user.",
-  "recommendation": "The agent should be trained to provide more empathetic and helpful responses, such as apologizing for the delay and offering to escalate the issue or provide a clear explanation for the tracking issue."
+  "overall_summary": "The conversation was unhelpful and lacked empathy, with the agent failing to provide a resolution or useful information to the user. The user's frustration was not addressed, leading to a negative experience.",
+  "recommendation": "The agent should be trained to actively listen to the user's concerns, provide clear and concise solutions, and empathize with their frustration to improve the overall conversation quality."
 }
