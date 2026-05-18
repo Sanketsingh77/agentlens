@@ -668,6 +668,7 @@ body {
 }
 
 .sev-HIGH   { background: #FECACA; color: var(--red); }
+.sev-CRITICAL { background: #FECACA; color: var(--red); }
 .sev-MEDIUM { background: #FDE68A; color: var(--amber); }
 .sev-LOW    { background: #A7F3D0; color: var(--green); }
 .sev-NONE   { background: var(--surface3); color: var(--ink3); }
@@ -924,7 +925,7 @@ body {
         <div class="page-heading">Conversation Analyzer</div>
         <div class="page-sub">Score agent quality across tone, resolution, and hallucination risk</div>
       </div>
-      <div class="topbar-pill">LLM-Powered</div>
+      <div class="topbar-pill">llama-3.3-70b-versatile</div>
     </div>
     <div class="content">
       <div class="sec-label">Upload File</div>
@@ -1068,7 +1069,10 @@ body {
       <div class="result" id="sr">
         <div class="result-hdr">
           <div class="result-title">Generated Test Scenarios</div>
-          <div class="result-file" id="sr-count"></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="result-file" id="sr-count"></div>
+            <button id="sc-export-btn" onclick="downloadScenarios()" disabled style="padding:5px 12px;background:var(--surface3);color:var(--ink4);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);">Export JSON</button>
+          </div>
         </div>
         <div class="result-body" id="sr-body"></div>
       </div>
@@ -1094,6 +1098,20 @@ body {
 
 <script>
 const API = 'http://127.0.0.1:8000';
+let currentScenarioData = null;
+
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function prettyLabel(value) {
+  return String(value || '').replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+}
 
 /* ─── TAB SWITCHING ──────────────────────── */
 function switchTab(name, el) {
@@ -1233,10 +1251,14 @@ async function runScenarios() {
   const ld   = document.getElementById('sl');
   const er   = document.getElementById('se');
   const rs   = document.getElementById('sr');
+  const exp  = document.getElementById('sc-export-btn');
 
   if (!desc) { showErr('se', 'Please describe your AI agent first.'); return; }
 
   ld.classList.add('show'); rs.classList.remove('show'); er.classList.remove('show');
+  exp.disabled = true;
+  exp.style.opacity = '0.6';
+  currentScenarioData = null;
 
   try {
     const r = await fetch(API + '/scenarios', {
@@ -1248,23 +1270,24 @@ async function runScenarios() {
     if (!r.ok) throw new Error(d.detail || 'Request failed');
 
     const sc = d.scenarios || [];
+    currentScenarioData = d;
     document.getElementById('sr-count').textContent = sc.length + ' scenarios';
+    exp.disabled = false;
+    exp.style.opacity = '1';
 
-    const groups = { NORMAL:[], EDGE:[], ADVERSARIAL:[] };
-    sc.forEach(s => { if (groups[s.type]) groups[s.type].push(s); });
+    const groups = { normal:[], edge_case:[], adversarial:[] };
+    sc.forEach(s => {
+      const cat = String(s.category || s.type || '').toLowerCase();
+      if (groups[cat]) groups[cat].push(s);
+    });
 
-    const labels = { NORMAL:'Normal', EDGE:'Edge Cases', ADVERSARIAL:'Adversarial' };
-    const cls    = { NORMAL:'sg-normal', EDGE:'sg-edge', ADVERSARIAL:'sg-adversarial' };
+    const labels = { normal:'Normal', edge_case:'Edge Cases', adversarial:'Adversarial' };
+    const cls    = { normal:'sg-normal', edge_case:'sg-edge', adversarial:'sg-adversarial' };
 
     document.getElementById('sr-body').innerHTML = Object.entries(groups).map(([type, items]) => `
       <div class="${cls[type]}">
         <div class="sg-hdr">${labels[type]}</div>
-        ${items.map(s => `
-          <div class="sc-item">
-            <div class="sc-id">#${s.id} · ${s.type}</div>
-            <div class="sc-user">${s.user_input}</div>
-            <div class="sc-exp">${s.expected_behavior}</div>
-          </div>`).join('')}
+        ${items.length ? items.map(renderScenarioCard).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
       </div>`).join('');
 
     rs.classList.add('show');
@@ -1275,7 +1298,85 @@ async function runScenarios() {
   }
 }
 
-/* ─── REPORTS ────────────────────────────── */
+function downloadScenarios() {
+  if (!currentScenarioData) return;
+  const blob = new Blob([JSON.stringify(currentScenarioData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'scenarios.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function renderScenarioCard(s) {
+  const evalDims = ((s.evaluation && s.evaluation.dimensions) || [
+    'policy_compliance',
+    'refusal_correctness',
+    'tone_quality',
+    'escalation_handling',
+    'hallucination_risk',
+    'security_compliance'
+  ]).map(d => `<span style="display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:11px;color:var(--ink3);">${escapeHTML(prettyLabel(d))} · Pending evaluation</span>`).join('');
+
+  const failureModes = (s.failure_modes || []).map(f => `<li>${escapeHTML(f)}</li>`).join('');
+  const tags = (s.tags || []).map(t => `<span style="display:inline-block;padding:4px 8px;border-radius:999px;background:var(--blue-lt);border:1px solid var(--blue-mid);font-size:11px;color:var(--blue);">${escapeHTML(t)}</span>`).join('');
+  const mt = s.multi_turn ? 'Yes' : 'No';
+  const esc = s.escalation_required ? 'Yes' : 'No';
+  const sev = String(s.severity || 'medium').toLowerCase();
+
+  return `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:0.3px;margin-bottom:6px;">${escapeHTML(s.id || '')} · ${escapeHTML(prettyLabel(s.category || s.type || ''))}</div>
+          <div style="font-size:14px;color:var(--ink);font-weight:600;line-height:1.5;">${escapeHTML(s.scenario || s.user_input || '')}</div>
+        </div>
+        <span class="sev-badge sev-${escapeHTML(sev).toUpperCase()}">${escapeHTML(sev)} severity</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Subcategory</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.subcategory || '—')}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Policy Area</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.policy_area || '—')}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Tone / Ambiguity</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.emotional_tone || '—')} · ${escapeHTML(s.ambiguity_level || '—')}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Escalation / Multi-turn</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">Escalation: ${esc} · Multi-turn: ${mt}</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Expected Behavior</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.55;">${escapeHTML(s.expected_behavior || '')}</div>
+      </div>
+
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Failure Modes</div>
+        <ul style="margin:0;padding-left:18px;color:var(--ink2);font-size:13px;line-height:1.55;">${failureModes || '<li>No failure modes provided</li>'}</ul>
+      </div>
+
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${tags || '<span style="font-size:13px;color:var(--ink4);">None</span>'}</div>
+      </div>
+
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Evaluation · Pending evaluation</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${evalDims}</div>
+      </div>
+    </div>`;
+}
+
+/* ─── REPORTS */
 async function loadReports() {
   try {
     const r = await fetch(API + '/reports');
@@ -1406,22 +1507,22 @@ function renderDebugReport(turns) {
 }
 
 function renderScenariosReport(d) {
-  const groups = { NORMAL:[], EDGE:[], ADVERSARIAL:[] };
-  (d.scenarios||[]).forEach(s => { if(groups[s.type]) groups[s.type].push(s); });
-  const labels = { NORMAL:'Normal', EDGE:'Edge Cases', ADVERSARIAL:'Adversarial' };
-  const colors = { NORMAL:'var(--green)', EDGE:'var(--amber)', ADVERSARIAL:'var(--red)' };
+  const groups = { normal:[], edge_case:[], adversarial:[] };
+  (d.scenarios||[]).forEach(s => {
+    const cat = String(s.category || s.type || '').toLowerCase();
+    if (groups[cat]) groups[cat].push(s);
+  });
+
+  const labels = { normal:'Normal', edge_case:'Edge Cases', adversarial:'Adversarial' };
+  const colors = { normal:'var(--green)', edge_case:'var(--amber)', adversarial:'var(--red)' };
+
   return Object.entries(groups).map(([type, items]) => `
     <div style="margin-bottom:20px;">
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:${colors[type]};margin-bottom:10px;display:flex;align-items:center;gap:10px;">
         ${labels[type]}
         <span style="flex:1;height:1px;background:var(--border);display:block;"></span>
       </div>
-      ${items.map(s=>`
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:6px;">
-          <div style="font-size:11px;font-weight:600;color:var(--ink4);margin-bottom:5px;">#${s.id} · ${s.type}</div>
-          <div style="font-size:14px;color:var(--ink);font-weight:500;margin-bottom:4px;line-height:1.5;">${s.user_input}</div>
-          <div style="font-size:13px;color:var(--ink3);line-height:1.5;"><span style="font-weight:600;">Expected:</span> ${s.expected_behavior}</div>
-        </div>`).join('')}
+      ${items.length ? items.map(renderScenarioCard).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
     </div>`).join('');
 }
 
@@ -1527,7 +1628,6 @@ function handleOverlayClick(e) {
     <div id="report-viewer-body" style="padding:24px;overflow-y:auto;max-height:70vh;"></div>
 
   </div>
-</div>
 </div>
 </body>
 </html>

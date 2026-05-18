@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import json
 import os
+import re
 import tempfile
 
 from debugger import run_debugger
@@ -33,6 +34,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ─────────────────────────────────────────
+# HELPER: JSON extraction
+# ─────────────────────────────────────────
+
+def extract_json_payload(raw_text: str) -> str:
+    text = raw_text.strip()
+    match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, flags=re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return text
+
 
 # ─────────────────────────────────────────
 # HELPER: analyze one conversation text
@@ -71,7 +84,7 @@ Conversation to analyze:
         temperature=0.3
     )
     raw = response.choices[0].message.content
-    cleaned = raw.strip().strip("```json").strip("```").strip()
+    cleaned = extract_json_payload(raw)
     return json.loads(cleaned)
 
 
@@ -89,6 +102,9 @@ def root():
             "POST /debug        - Debug conversation turn by turn",
             "POST /scenarios    - Generate test scenarios",
             "GET  /reports      - List all saved reports",
+            "GET  /reports/{filename} - Get one saved report",
+            "GET  /conversations - List all saved conversations",
+            "DELETE /reports/{filename} - Delete a saved report",
             "GET  /health       - Health check"
         ]
     }
@@ -107,8 +123,11 @@ async def analyze(file: UploadFile = File(...)):
 
     contents = await file.read()
     conversation_text = contents.decode("utf-8")
+
+    safe_name = os.path.basename(file.filename)
+
     os.makedirs("conversations", exist_ok=True)
-    with open(f"conversations/{file.filename}", "w") as f:
+    with open(f"conversations/{safe_name}", "w", encoding="utf-8") as f:
         f.write(conversation_text)
 
     try:
@@ -118,12 +137,12 @@ async def analyze(file: UploadFile = File(...)):
 
     # Save report
     os.makedirs("reports", exist_ok=True)
-    report_name = file.filename.replace(".txt", "_report.json")
-    with open(f"reports/{report_name}", "w") as f:
+    report_name = safe_name.replace(".txt", "_report.json")
+    with open(f"reports/{report_name}", "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
     return {
-        "filename": file.filename,
+        "filename": safe_name,
         "report": report
     }
 
@@ -136,8 +155,11 @@ async def debug(file: UploadFile = File(...)):
 
     contents = await file.read()
     conversation_text = contents.decode("utf-8")
+
+    safe_name = os.path.basename(file.filename)
+
     os.makedirs("conversations", exist_ok=True)
-    with open(f"conversations/{file.filename}", "w") as f:
+    with open(f"conversations/{safe_name}", "w", encoding="utf-8") as f:
         f.write(conversation_text)
 
     # Write to a temp file so run_debugger can read it
@@ -145,7 +167,8 @@ async def debug(file: UploadFile = File(...)):
         mode="w",
         suffix=".txt",
         delete=False,
-        dir=tempfile.gettempdir()
+        dir=tempfile.gettempdir(),
+        encoding="utf-8"
     ) as tmp:
         tmp.write(conversation_text)
         tmp_path = tmp.name
@@ -159,7 +182,7 @@ async def debug(file: UploadFile = File(...)):
             os.unlink(tmp_path)
 
     return {
-        "filename": file.filename,
+        "filename": safe_name,
         "turns": results
     }
 
@@ -197,15 +220,19 @@ def list_reports():
         "total": len(files),
         "reports": sorted(files)
     }
+
+
 @app.get("/reports/{filename}")
 def get_report(filename: str):
     """Return the content of a specific report file."""
     path = f"reports/{filename}"
     if not os.path.exists(path) or not filename.endswith(".json"):
         raise HTTPException(status_code=404, detail="Report not found.")
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
+
+
 @app.get("/conversations")
 def list_conversations():
     """List all saved conversation files."""
@@ -214,6 +241,8 @@ def list_conversations():
         return {"conversations": []}
     files = [f for f in os.listdir(folder) if f.endswith(".txt")]
     return {"total": len(files), "conversations": sorted(files)}
+
+
 @app.delete("/reports/{filename}")
 def delete_report(filename: str):
     """Delete a specific report file."""
