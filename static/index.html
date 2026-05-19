@@ -1324,6 +1324,39 @@ function scenarioDomKey(raw) {
   return key || ('sc-' + Math.random().toString(36).slice(2, 8));
 }
 
+function isPlaceholderEvaluation(evaluation) {
+  if (!evaluation || typeof evaluation !== 'object') return true;
+
+  const metricKeys = [
+    'policy_compliance',
+    'refusal_correctness',
+    'tone_quality',
+    'hallucination_risk',
+    'security_compliance'
+  ];
+
+  const values = metricKeys.map(k => Number(evaluation[k]));
+  const allMissingOrZero = values.every(v => !Number.isFinite(v) || v === 0);
+
+  const reason = String(evaluation.reason || '').trim();
+  const better = String(evaluation.better_response || '').trim();
+  const verdict = String(evaluation.overall_verdict || '').trim().toLowerCase();
+
+  const looksLikePlaceholderReason =
+    !reason ||
+    reason === 'No reason provided.' ||
+    reason === 'No improved response provided.';
+
+  const looksLikePlaceholderBetter =
+    !better ||
+    better === 'No improved response provided.' ||
+    better === 'No reason provided.';
+
+  const looksLikePlaceholderVerdict = !verdict || verdict === 'warn';
+
+  return allMissingOrZero && looksLikePlaceholderReason && looksLikePlaceholderBetter && looksLikePlaceholderVerdict;
+}
+
 function evaluationScoreClass(value, invert = false) {
   const v = Number(value);
   if (!Number.isFinite(v)) return 'mid';
@@ -1333,7 +1366,8 @@ function evaluationScoreClass(value, invert = false) {
 
 function renderMetricBox(label, value, invert = false) {
   const cls = evaluationScoreClass(value, invert);
-  const displayValue = Number.isFinite(Number(value)) ? `${value}/10` : '—';
+  const numericValue = Number(value);
+  const displayValue = Number.isFinite(numericValue) ? `${numericValue}/10` : '—';
   return `
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;min-width:0;">
       <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">${escapeHTML(label)}</div>
@@ -1360,38 +1394,333 @@ function renderEvaluationPending(key) {
 }
 
 function renderEvaluationResult(evaluation) {
-  const verdict = String(evaluation?.overall_verdict || 'warn').toLowerCase();
-  const verdictBg = verdict === 'pass' ? 'var(--green-lt)' : verdict === 'fail' ? 'var(--red-lt)' : 'var(--amber-lt)';
-  const verdictColor = verdict === 'pass' ? 'var(--green)' : verdict === 'fail' ? 'var(--red)' : 'var(--amber)';
-  const verdictBorder = verdict === 'pass' ? '#A7F3D0' : verdict === 'fail' ? '#FECACA' : '#FDE68A';
+  const safeEvaluation = evaluation || {};
+
+  const verdict = String(
+    safeEvaluation.overall_verdict || 'warn'
+  ).toLowerCase();
+
+  const verdictBg =
+    verdict === 'pass'
+      ? 'var(--green-lt)'
+      : verdict === 'fail'
+      ? 'var(--red-lt)'
+      : 'var(--amber-lt)';
+
+  const verdictColor =
+    verdict === 'pass'
+      ? 'var(--green)'
+      : verdict === 'fail'
+      ? 'var(--red)'
+      : 'var(--amber)';
+
+  const verdictBorder =
+    verdict === 'pass'
+      ? '#A7F3D0'
+      : verdict === 'fail'
+      ? '#FECACA'
+      : '#FDE68A';
+
+  const hallucinationValue = Number(
+    safeEvaluation.hallucination_risk || 0
+  );
+
+  let hallucinationLabel = 'Low';
+
+  if (hallucinationValue >= 7) {
+    hallucinationLabel = 'High';
+  } else if (hallucinationValue >= 4) {
+    hallucinationLabel = 'Medium';
+  }
+
+  const hallucinationClass =
+    hallucinationLabel.toLowerCase();
+
+  function renderStatus(label, status, reason) {
+    const normalized =
+      String(status || '').toLowerCase();
+
+    const isPass = normalized === 'pass';
+
+    return `
+      <div style="
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:10px;
+        padding:14px;
+      ">
+        <div style="
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          margin-bottom:10px;
+          gap:10px;
+        ">
+          <div style="
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:0.4px;
+            text-transform:uppercase;
+            color:var(--ink4);
+          ">
+            ${escapeHTML(label)}
+          </div>
+
+          <span style="
+            padding:4px 10px;
+            border-radius:999px;
+            font-size:11px;
+            font-weight:700;
+            text-transform:uppercase;
+            background:${isPass ? 'var(--green-lt)' : 'var(--red-lt)'};
+            color:${isPass ? 'var(--green)' : 'var(--red)'};
+            border:1px solid ${isPass ? '#A7F3D0' : '#FECACA'};
+          ">
+            ${escapeHTML(status || 'unknown')}
+          </span>
+        </div>
+
+        <div style="
+          font-size:13px;
+          line-height:1.6;
+          color:var(--ink2);
+        ">
+          ${escapeHTML(reason || 'No reason provided.')}
+        </div>
+      </div>
+    `;
+  }
 
   return `
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);">Evaluation Results</div>
-        <span style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:${verdictBg};color:${verdictColor};border:1px solid ${verdictBorder};">
+    <div style="
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:16px;
+    ">
+
+      <!-- HEADER -->
+
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:16px;
+      ">
+        <div style="
+          font-size:10px;
+          font-weight:700;
+          letter-spacing:0.5px;
+          text-transform:uppercase;
+          color:var(--ink4);
+        ">
+          Evaluation Results
+        </div>
+
+        <span style="
+          font-size:11px;
+          font-weight:700;
+          letter-spacing:0.5px;
+          text-transform:uppercase;
+          padding:5px 12px;
+          border-radius:999px;
+          background:${verdictBg};
+          color:${verdictColor};
+          border:1px solid ${verdictBorder};
+        ">
           ${escapeHTML(verdict)}
         </span>
       </div>
 
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
-        ${renderMetricBox('Policy Compliance', evaluation?.policy_compliance)}
-        ${renderMetricBox('Refusal Correctness', evaluation?.refusal_correctness)}
-        ${renderMetricBox('Tone Quality', evaluation?.tone_quality)}
-        ${renderMetricBox('Hallucination Risk', evaluation?.hallucination_risk, true)}
-        ${renderMetricBox('Security Compliance', evaluation?.security_compliance)}
+      <!-- SIMULATED RESPONSE -->
+
+      <div style="
+        margin-bottom:14px;
+        background:var(--surface2);
+        border:1px solid var(--border);
+        border-radius:10px;
+        padding:14px;
+      ">
+        <div style="
+          font-size:11px;
+          font-weight:700;
+          letter-spacing:0.4px;
+          text-transform:uppercase;
+          color:var(--ink4);
+          margin-bottom:8px;
+        ">
+          Simulated Agent Response
+        </div>
+
+        <div style="
+          font-size:13px;
+          line-height:1.7;
+          color:var(--ink2);
+          white-space:pre-wrap;
+        ">
+          ${escapeHTML(
+            safeEvaluation.simulated_response ||
+            'No simulated response generated.'
+          )}
+        </div>
       </div>
 
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Reason</div>
-        <div style="font-size:13px;line-height:1.6;color:var(--ink2);">${escapeHTML(evaluation?.reason || 'No reason provided.')}</div>
+      <!-- SCORE GRID -->
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:10px;
+        margin-bottom:14px;
+      ">
+        ${renderMetricBox(
+          'Policy Compliance',
+          safeEvaluation.policy_compliance
+        )}
+
+        ${renderMetricBox(
+          'Tone Quality',
+          safeEvaluation.tone_quality
+        )}
+
+        ${renderMetricBox(
+          'Security Compliance',
+          safeEvaluation.security_compliance
+        )}
       </div>
 
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Better Response</div>
-        <div style="font-size:13px;line-height:1.6;color:var(--ink2);background:var(--surface2);border:1px solid var(--border);padding:10px 12px;border-radius:8px;">${escapeHTML(evaluation?.better_response || 'No improved response provided.')}</div>
+      <!-- SECOND GRID -->
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+        margin-bottom:14px;
+      ">
+        ${renderMetricBox(
+          'Refusal Correctness',
+          safeEvaluation.refusal_correctness
+        )}
+
+        <div style="
+          background:var(--surface);
+          border:1px solid var(--border);
+          border-radius:10px;
+          padding:12px;
+        ">
+          <div style="
+            font-size:11px;
+            font-weight:700;
+            letter-spacing:0.4px;
+            text-transform:uppercase;
+            color:var(--ink4);
+            margin-bottom:8px;
+          ">
+            Hallucination Risk
+          </div>
+
+          <span class="risk-pill risk-${hallucinationClass}">
+            ${hallucinationLabel}
+          </span>
+        </div>
       </div>
-    </div>`;
+
+      <!-- STATUS DETAILS -->
+
+      <div style="
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        margin-bottom:14px;
+      ">
+
+        ${renderStatus(
+          'Policy Compliance Status',
+          safeEvaluation.policy_compliance_status,
+          safeEvaluation.policy_compliance_reason
+        )}
+
+        ${renderStatus(
+          'Refusal Correctness Status',
+          safeEvaluation.refusal_correctness_status,
+          safeEvaluation.refusal_correctness_reason
+        )}
+
+        ${renderStatus(
+          'Security Compliance Status',
+          safeEvaluation.security_compliance_status,
+          safeEvaluation.security_compliance_reason
+        )}
+      </div>
+
+      <!-- OVERALL REASON -->
+
+      <div style="
+        margin-top:14px;
+        padding-top:14px;
+        border-top:1px solid var(--border);
+      ">
+        <div style="
+          font-size:11px;
+          font-weight:700;
+          letter-spacing:0.4px;
+          text-transform:uppercase;
+          color:var(--ink4);
+          margin-bottom:6px;
+        ">
+          Overall Evaluation
+        </div>
+
+        <div style="
+          font-size:13px;
+          line-height:1.6;
+          color:var(--ink2);
+        ">
+          ${escapeHTML(
+            safeEvaluation.reason ||
+            'No evaluation summary provided.'
+          )}
+        </div>
+      </div>
+
+      <!-- BETTER RESPONSE -->
+
+      <div style="
+        margin-top:14px;
+        padding-top:14px;
+        border-top:1px solid var(--border);
+      ">
+        <div style="
+          font-size:11px;
+          font-weight:700;
+          letter-spacing:0.4px;
+          text-transform:uppercase;
+          color:var(--ink4);
+          margin-bottom:8px;
+        ">
+          Better Response
+        </div>
+
+        <div style="
+          font-size:13px;
+          line-height:1.7;
+          color:var(--ink2);
+          background:var(--surface2);
+          border:1px solid var(--border);
+          border-radius:8px;
+          padding:12px;
+        ">
+          ${escapeHTML(
+            safeEvaluation.better_response ||
+            'No better response provided.'
+          )}
+        </div>
+      </div>
+
+    </div>
+  `;
 }
 
 function renderScenarioCard(s, key) {
@@ -1401,7 +1730,7 @@ function renderScenarioCard(s, key) {
   const mt = s.multi_turn ? 'Yes' : 'No';
   const esc = s.escalation_required ? 'Yes' : 'No';
   const sev = String(s.severity || 'medium').toLowerCase();
-  const evaluationHtml = s.evaluation ? renderEvaluationResult(s.evaluation) : renderEvaluationPending(domKey);
+  const evaluationHtml = isPlaceholderEvaluation(s.evaluation) ? renderEvaluationPending(domKey) : renderEvaluationResult(s.evaluation);
 
   return `
     <div id="scenario-card-${domKey}" data-scenario-key="${domKey}" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
@@ -1499,14 +1828,26 @@ async function runScenarioEvaluation(rawKey) {
       throw new Error(data.detail || 'Evaluation failed');
     }
 
-    const evaluation = data.evaluation || {};
-    scenario.evaluation = evaluation;
+    const evaluation = (data && typeof data.evaluation === 'object' && data.evaluation) ? data.evaluation : data;
+    const normalizedEvaluation = {
+      policy_compliance: Number(evaluation.policy_compliance ?? 0),
+      refusal_correctness: Number(evaluation.refusal_correctness ?? 0),
+      tone_quality: Number(evaluation.tone_quality ?? 0),
+      hallucination_risk: Number(evaluation.hallucination_risk ?? 0),
+      security_compliance: Number(evaluation.security_compliance ?? 0),
+      overall_verdict: evaluation.overall_verdict || 'warn',
+      reason: evaluation.reason || 'No reason provided.',
+      better_response: evaluation.better_response || 'No improved response provided.',
+      _evaluated: true
+    };
+
+    scenario.evaluation = normalizedEvaluation;
     if (currentScenarioData?.scenarios) {
       const idx = currentScenarioData.scenarios.findIndex(s => s._uiKey === scenario._uiKey);
-      if (idx >= 0) currentScenarioData.scenarios[idx].evaluation = evaluation;
+      if (idx >= 0) currentScenarioData.scenarios[idx].evaluation = normalizedEvaluation;
     }
 
-    panel.innerHTML = renderEvaluationResult(evaluation);
+    panel.innerHTML = renderEvaluationResult(normalizedEvaluation);
 
     if (btn) {
       btn.disabled = false;
