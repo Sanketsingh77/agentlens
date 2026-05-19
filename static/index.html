@@ -491,9 +491,8 @@ body {
 
 /* ─── SCENARIO EXPLORER ─────────────────────────────── */
 .scenario-explorer {
-  position: sticky;
-  top: 8px;
-  z-index: 9;
+  position: static;
+  z-index: 1;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -999,9 +998,8 @@ body {
 
 /* ─── SCENARIO ACCORDION / FILTERS ─────────────────── */
 .scenario-explorer {
-  position: sticky;
-  top: 8px;
-  z-index: 9;
+  position: static;
+  z-index: 1;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1474,6 +1472,11 @@ function getScenarioVerdict(s) {
   return String(evaluation.overall_verdict || 'pending').toLowerCase();
 }
 
+function getScenarioVerdictLabel(s) {
+  const verdict = getScenarioVerdict(s);
+  return verdict === 'pending' ? 'Not evaluated' : verdict.toUpperCase();
+}
+
 function getScenarioSearchText(s) {
   return [
     s.id,
@@ -1522,19 +1525,21 @@ function setScenarioCardOpen(key, open) {
 
 function toggleScenarioCard(key) {
   const card = document.getElementById(`scenario-card-${key}`);
+  const btn = document.getElementById(`scenario-card-toggle-${key}`);
   if (!card) return;
   const open = !card.classList.contains('is-open');
-  setScenarioCardOpen(key, open);
+  card.classList.toggle('is-open', open);
+  if (btn) btn.textContent = open ? 'Collapse' : 'Expand';
 }
 
 function toggleScenarioGroup(type) {
   const body = document.getElementById(`scenario-group-body-${type}`);
   const btn = document.getElementById(`scenario-group-toggle-${type}`);
-  if (!body || !btn) return;
-  const open = body.style.display === 'none';
-  body.style.display = open ? 'block' : 'none';
-  scenarioGroupState[type] = open;
-  btn.textContent = open ? 'Collapse' : 'Expand';
+  if (!body) return;
+  const hidden = getComputedStyle(body).display === 'none';
+  body.style.display = hidden ? 'block' : 'none';
+  if (btn) btn.textContent = hidden ? 'Collapse' : 'Expand';
+  scenarioGroupState[type] = hidden;
 }
 
 function getVisibleScenarioCards() {
@@ -1683,7 +1688,7 @@ function updateScenarioNavigator(visibleCards) {
       <span class="scenario-summary-pill">${counts.pass} PASS</span>
       <span class="scenario-summary-pill">${counts.warn} WARN</span>
       <span class="scenario-summary-pill">${counts.fail} FAIL</span>
-      <span class="scenario-summary-pill">${counts.pending} Pending</span>
+      <span class="scenario-summary-pill">${counts.pending} Not evaluated</span>
     `;
   }
 }
@@ -2184,7 +2189,7 @@ function renderScenarioCard(s, key) {
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
             <span class="sev-badge sev-${escapeHTML(sev).toUpperCase()}">${escapeHTML(sev)} severity</span>
-            <span id="scenario-verdict-${domKey}" class="scenario-verdict-pill scenario-verdict-${hasEvaluation ? escapeHTML(verdict) : 'pending'}">${hasEvaluation ? escapeHTML(verdict) : 'pending'}</span>
+            <span id="scenario-verdict-${domKey}" class="scenario-verdict-pill scenario-verdict-${hasEvaluation ? escapeHTML(verdict) : 'pending'}">${escapeHTML(getScenarioVerdictLabel(s))}</span>
             <span id="scenario-card-toggle-${domKey}" class="scenario-card-toggle">Expand</span>
           </div>
         </div>
@@ -2311,7 +2316,7 @@ async function runScenarioEvaluation(rawKey) {
     if (verdictPill) {
       const v = String(normalizedEvaluation.overall_verdict || 'pending').toLowerCase();
       verdictPill.className = `scenario-verdict-pill scenario-verdict-${v}`;
-      verdictPill.textContent = v;
+      verdictPill.textContent = v.toUpperCase();
     }
 
     panel.innerHTML = renderEvaluationResult(normalizedEvaluation, key);
