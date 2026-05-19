@@ -2,11 +2,10 @@ import json
 import os
 import re
 from collections import Counter
-from groq import Groq
 from dotenv import load_dotenv
+from llm_client import call_llm, extract_json_payload
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
 def generate_scenarios(agent_description):
@@ -95,26 +94,11 @@ severity must be one of: low / medium / high / critical
 category must be one of: normal / edge_case / adversarial
 """
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are a senior AI evaluation engineer. "
-                    "You generate rigorous, realistic, production-grade test scenarios. "
-                    "Always respond with valid JSON only. No markdown. No explanation. No extra text."
-                )
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.85,
-        max_tokens=6000
-    )
-    return response.choices[0].message.content
+    return call_llm(
+    messages=[...],
+    temperature=0.85,
+    max_tokens=6000
+)
 
 
 def extract_json_payload(raw_text: str) -> str:

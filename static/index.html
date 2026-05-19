@@ -489,6 +489,138 @@ body {
 
 .result-body { padding: 24px; }
 
+/* ─── SCENARIO EXPLORER ─────────────────────────────── */
+.scenario-explorer {
+  position: sticky;
+  top: 8px;
+  z-index: 9;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.scenario-explorer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scenario-search {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  outline: none;
+}
+
+.scenario-search:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+
+.scenario-select {
+  min-width: 260px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  outline: none;
+}
+
+.scenario-chip-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scenario-chip {
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--ink3);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+
+.scenario-chip.active {
+  background: var(--blue-lt);
+  color: var(--blue);
+  border-color: var(--blue-mid);
+}
+
+.scenario-explorer-meta {
+  display: none;
+  margin-top: 10px;
+}
+
+.scenario-summary-strip {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scenario-summary-pill {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.scenario-jump-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.scenario-jump-item {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--blue-mid);
+  background: var(--blue-lt);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  max-width: 100%;
+}
+
+.scenario-jump-item span {
+  display: inline-block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.scenario-card {
+  scroll-margin-top: 180px;
+}
+
+.scenario-card .scenario-title {
+  cursor: pointer;
+}
+
 /* ─── SCORE CARDS ───────────────────────────────────── */
 .score-row {
   display: grid;
@@ -1066,6 +1198,32 @@ body {
         <span id="se-msg"></span>
       </div>
 
+      <div class="scenario-explorer" id="scenario-explorer" style="display:none;">
+        <div class="scenario-explorer-row" style="margin-bottom:10px;">
+          <input id="scenario-search" class="scenario-search" type="search" placeholder="Search scenarios, ids, subcategories, policy areas…" oninput="applyScenarioFilters()"/>
+          <select id="scenario-jump" class="scenario-select" onchange="jumpToSelectedScenario()">
+            <option value="">Jump to a scenario…</option>
+          </select>
+          <button class="scenario-chip" onclick="expandAllScenarioEvaluations()">Expand All</button>
+          <button class="scenario-chip" onclick="collapseAllScenarioEvaluations()">Collapse All</button>
+          <button class="scenario-chip" id="scenario-explorer-meta-btn" onclick="toggleScenarioExplorerMeta()">Show Quick Jump</button>
+        </div>
+        <div class="scenario-chip-row" style="margin-bottom:8px;">
+          <button class="scenario-chip active" data-filter-group="category" data-filter-value="all" onclick="setScenarioFilter('category','all',this)">All Categories</button>
+          <button class="scenario-chip" data-filter-group="category" data-filter-value="normal" onclick="setScenarioFilter('category','normal',this)">Normal</button>
+          <button class="scenario-chip" data-filter-group="category" data-filter-value="edge_case" onclick="setScenarioFilter('category','edge_case',this)">Edge Cases</button>
+          <button class="scenario-chip" data-filter-group="category" data-filter-value="adversarial" onclick="setScenarioFilter('category','adversarial',this)">Adversarial</button>
+          <button class="scenario-chip active" data-filter-group="verdict" data-filter-value="all" onclick="setScenarioFilter('verdict','all',this)">All Verdicts</button>
+          <button class="scenario-chip" data-filter-group="verdict" data-filter-value="pass" onclick="setScenarioFilter('verdict','pass',this)">Pass</button>
+          <button class="scenario-chip" data-filter-group="verdict" data-filter-value="warn" onclick="setScenarioFilter('verdict','warn',this)">Warn</button>
+          <button class="scenario-chip" data-filter-group="verdict" data-filter-value="fail" onclick="setScenarioFilter('verdict','fail',this)">Fail</button>
+        </div>
+        <div id="scenario-explorer-meta" class="scenario-explorer-meta">
+          <div class="scenario-summary-strip" id="scenario-summary-strip"></div>
+          <div class="scenario-jump-list" id="scenario-jump-list"></div>
+        </div>
+      </div>
+
       <div class="result" id="sr">
         <div class="result-hdr">
           <div class="result-title">Generated Test Scenarios</div>
@@ -1099,6 +1257,7 @@ body {
 <script>
 const API = 'http://127.0.0.1:8000';
 let currentScenarioData = null;
+let scenarioFilters = { category: 'all', verdict: 'all', search: '' };
 
 function escapeHTML(value) {
   return String(value ?? '')
@@ -1111,6 +1270,173 @@ function escapeHTML(value) {
 
 function prettyLabel(value) {
   return String(value || '').replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+}
+
+function getScenarioCategory(s) {
+  return String(s?.category || s?.type || '').toLowerCase();
+}
+
+function getScenarioVerdict(s) {
+  const evaluation = s && typeof s.evaluation === 'object' ? s.evaluation : null;
+  if (!evaluation || evaluation._evaluated === false) return 'pending';
+  return String(evaluation.overall_verdict || 'pending').toLowerCase();
+}
+
+function getScenarioSearchText(s) {
+  return [
+    s.id,
+    s.scenario,
+    s.user_input,
+    s.subcategory,
+    s.policy_area,
+    s.category,
+    s.type,
+    s.severity,
+    s.expected_behavior,
+    ...(s.tags || []),
+    ...(s.failure_modes || [])
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function setScenarioFilter(group, value, btn) {
+  const current = scenarioFilters[group];
+  const next = (current === value && value !== 'all') ? 'all' : value;
+  scenarioFilters[group] = next;
+
+  document.querySelectorAll(`[data-filter-group="${group}"]`).forEach(el => el.classList.remove('active'));
+  const activeBtn = document.querySelector(`[data-filter-group="${group}"][data-filter-value="${next}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  applyScenarioFilters();
+}
+
+function toggleScenarioExplorerMeta(force) {
+  const meta = document.getElementById('scenario-explorer-meta');
+  const btn = document.getElementById('scenario-explorer-meta-btn');
+  if (!meta || !btn) return;
+
+  const shouldShow = typeof force === 'boolean'
+    ? force
+    : (meta.style.display === 'none' || !meta.style.display);
+
+  meta.style.display = shouldShow ? 'block' : 'none';
+  btn.textContent = shouldShow ? 'Hide Quick Jump' : 'Show Quick Jump';
+}
+
+function scrollToScenario(key, openDetails = true) {
+  const card = document.getElementById(`scenario-card-${key}`);
+  if (!card) return;
+  if (openDetails) {
+    const details = document.getElementById(`scenario-eval-details-${key}`);
+    const toggle = document.getElementById(`scenario-eval-toggle-${key}`);
+    if (details && toggle) {
+      details.style.display = 'flex';
+      toggle.textContent = 'Hide Results';
+    }
+  }
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  card.style.outline = '2px solid rgba(37,99,235,0.18)';
+  setTimeout(() => { card.style.outline = 'none'; }, 1200);
+}
+
+function jumpToSelectedScenario() {
+  const sel = document.getElementById('scenario-jump');
+  if (!sel || !sel.value) return;
+  scrollToScenario(sel.value, true);
+  toggleScenarioExplorerMeta(false);
+}
+
+function setAllScenarioEvaluations(open) {
+  document.querySelectorAll('[id^="scenario-eval-details-"]').forEach(el => {
+    const key = el.id.replace('scenario-eval-details-', '');
+    const btn = document.getElementById(`scenario-eval-toggle-${key}`);
+    el.style.display = open ? 'flex' : 'none';
+    if (btn) btn.textContent = open ? 'Hide Results' : 'View Results';
+  });
+}
+
+function expandAllScenarioEvaluations() {
+  setAllScenarioEvaluations(true);
+}
+
+function collapseAllScenarioEvaluations() {
+  setAllScenarioEvaluations(false);
+}
+
+function getVisibleScenarioCards() {
+  return Array.from(document.querySelectorAll('[id^="scenario-card-"]')).filter(el => el.style.display !== 'none');
+}
+
+function updateScenarioNavigator(visibleCards) {
+  const cards = visibleCards && visibleCards.length ? visibleCards : getVisibleScenarioCards();
+  const jump = document.getElementById('scenario-jump');
+  const jumpList = document.getElementById('scenario-jump-list');
+  const strip = document.getElementById('scenario-summary-strip');
+
+  if (jump) {
+    const current = jump.value;
+    jump.innerHTML = '<option value="">Jump to a scenario…</option>' + cards.map(card => {
+      const key = card.dataset.scenarioKey || card.id.replace('scenario-card-', '');
+      const id = card.dataset.scenarioId || key;
+      const title = card.dataset.scenarioTitle || '';
+      const display = title.length > 56 ? title.slice(0, 56) + '…' : title;
+      return `<option value="${escapeHTML(key)}">${escapeHTML(id)} — ${escapeHTML(display)}</option>`;
+    }).join('');
+    if (current && [...jump.options].some(opt => opt.value === current)) jump.value = current;
+  }
+
+  if (jumpList) {
+    jumpList.innerHTML = cards.slice(0, 8).map(card => {
+      const key = card.dataset.scenarioKey || card.id.replace('scenario-card-', '');
+      const id = card.dataset.scenarioId || key;
+      const title = card.dataset.scenarioTitle || '';
+      return `<button class="scenario-jump-item" onclick="scrollToScenario('${escapeHTML(key)}', true); toggleScenarioExplorerMeta(false)"><span>${escapeHTML(id)} — ${escapeHTML(title)}</span></button>`;
+    }).join('') || '<div style="font-size:13px;color:var(--ink4);">No scenarios match the current filters.</div>';
+  }
+
+  if (strip) {
+    const total = currentScenarioData?.scenarios?.length || 0;
+    const counts = { pass:0, warn:0, fail:0, pending:0 };
+    (currentScenarioData?.scenarios || []).forEach(s => {
+      const verdict = getScenarioVerdict(s);
+      if (counts[verdict] !== undefined) counts[verdict] += 1;
+      else counts.pending += 1;
+    });
+    strip.innerHTML = `
+      <span class="scenario-summary-pill">${cards.length} visible / ${total} total</span>
+      <span class="scenario-summary-pill">${counts.pass} PASS</span>
+      <span class="scenario-summary-pill">${counts.warn} WARN</span>
+      <span class="scenario-summary-pill">${counts.fail} FAIL</span>
+      <span class="scenario-summary-pill">${counts.pending} Pending</span>
+    `;
+  }
+}
+
+function applyScenarioFilters() {
+  const search = document.getElementById('scenario-search');
+  scenarioFilters.search = search ? search.value.trim().toLowerCase() : scenarioFilters.search;
+
+  const cards = Array.from(document.querySelectorAll('[id^="scenario-card-"]'));
+  const visibleCards = [];
+
+  cards.forEach(card => {
+    const cat = (card.dataset.category || '').toLowerCase();
+    const verdict = (card.dataset.verdict || '').toLowerCase();
+    const text = (card.dataset.search || '').toLowerCase();
+    const matchesSearch = !scenarioFilters.search || text.includes(scenarioFilters.search);
+    const matchesCategory = scenarioFilters.category === 'all' || cat === scenarioFilters.category;
+    const matchesVerdict = scenarioFilters.verdict === 'all' || verdict === scenarioFilters.verdict;
+    const visible = matchesSearch && matchesCategory && matchesVerdict;
+    card.style.display = visible ? '' : 'none';
+    if (visible) visibleCards.push(card);
+  });
+
+  document.querySelectorAll('[data-scenario-group]').forEach(group => {
+    const groupVisible = Array.from(group.querySelectorAll('[id^="scenario-card-"]')).some(card => card.style.display !== 'none');
+    group.style.display = groupVisible ? '' : 'none';
+  });
+
+  updateScenarioNavigator(visibleCards);
 }
 
 /* ─── TAB SWITCHING ──────────────────────── */
@@ -1277,9 +1603,19 @@ async function runScenarios() {
 
     currentScenarioData = { ...d, scenarios: sc };
 
+    scenarioFilters = { category: 'all', verdict: 'all', search: '' };
+    const searchInput = document.getElementById('scenario-search');
+    if (searchInput) searchInput.value = '';
+    document.querySelectorAll('[data-filter-group]').forEach(el => {
+      el.classList.toggle('active', el.dataset.filterValue === 'all');
+    });
+
     document.getElementById('sr-count').textContent = sc.length + ' scenarios';
     exp.disabled = false;
     exp.style.opacity = '1';
+
+    const explorer = document.getElementById('scenario-explorer');
+    if (explorer) explorer.style.display = 'block';
 
     const groups = { normal:[], edge_case:[], adversarial:[] };
     sc.forEach(s => {
@@ -1291,11 +1627,12 @@ async function runScenarios() {
     const cls    = { normal:'sg-normal', edge_case:'sg-edge', adversarial:'sg-adversarial' };
 
     document.getElementById('sr-body').innerHTML = Object.entries(groups).map(([type, items]) => `
-      <div class="${cls[type]}">
+      <div class="scenario-group ${cls[type]}" data-scenario-group="${type}">
         <div class="sg-hdr">${labels[type]}</div>
         ${items.length ? items.map((s) => renderScenarioCard(s, s._uiKey)).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
       </div>`).join('');
 
+    applyScenarioFilters();
     rs.classList.add('show');
   } catch(e) {
     showErr('se', 'Error: ' + e.message);
@@ -1393,244 +1730,115 @@ function renderEvaluationPending(key) {
     </div>`;
 }
 
-function renderEvaluationResult(evaluation) {
+function renderEvaluationResult(evaluation, key) {
   const safeEvaluation = evaluation || {};
-
-  const verdict = String(
-    safeEvaluation.overall_verdict || 'warn'
-  ).toLowerCase();
+  const verdict = String(safeEvaluation.overall_verdict || 'warn').toLowerCase();
 
   const verdictBg =
-    verdict === 'pass'
-      ? 'var(--green-lt)'
-      : verdict === 'fail'
-      ? 'var(--red-lt)'
-      : 'var(--amber-lt)';
+    verdict === 'pass' ? 'var(--green-lt)' :
+    verdict === 'fail' ? 'var(--red-lt)' :
+    'var(--amber-lt)';
 
   const verdictColor =
-    verdict === 'pass'
-      ? 'var(--green)'
-      : verdict === 'fail'
-      ? 'var(--red)'
-      : 'var(--amber)';
+    verdict === 'pass' ? 'var(--green)' :
+    verdict === 'fail' ? 'var(--red)' :
+    'var(--amber)';
 
   const verdictBorder =
-    verdict === 'pass'
-      ? '#A7F3D0'
-      : verdict === 'fail'
-      ? '#FECACA'
-      : '#FDE68A';
+    verdict === 'pass' ? '#A7F3D0' :
+    verdict === 'fail' ? '#FECACA' :
+    '#FDE68A';
 
-  const hallucinationRisk = String(safeEvaluation.hallucination_risk || 'low').toLowerCase();
-
+  const hallucinationValue = Number(safeEvaluation.hallucination_risk || 0);
   let hallucinationLabel = 'Low';
-  if (hallucinationRisk === 'high') {
-    hallucinationLabel = 'High';
-  } else if (hallucinationRisk === 'medium') {
-    hallucinationLabel = 'Medium';
-  }
+  if (hallucinationValue >= 7) hallucinationLabel = 'High';
+  else if (hallucinationValue >= 4) hallucinationLabel = 'Medium';
 
   const hallucinationClass = hallucinationLabel.toLowerCase();
 
   function renderStatus(label, status, reason) {
-    const normalized =
-      String(status || '').toLowerCase();
-
+    const normalized = String(status || '').toLowerCase();
     const isPass = normalized === 'pass';
 
     return `
-      <div style="
-        background:var(--surface);
-        border:1px solid var(--border);
-        border-radius:10px;
-        padding:14px;
-      ">
-        <div style="
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          margin-bottom:10px;
-          gap:10px;
-        ">
-          <div style="
-            font-size:11px;
-            font-weight:700;
-            letter-spacing:0.4px;
-            text-transform:uppercase;
-            color:var(--ink4);
-          ">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);">
             ${escapeHTML(label)}
           </div>
-
-          <span style="
-            padding:4px 10px;
-            border-radius:999px;
-            font-size:11px;
-            font-weight:700;
-            text-transform:uppercase;
-            background:${isPass ? 'var(--green-lt)' : 'var(--red-lt)'};
-            color:${isPass ? 'var(--green)' : 'var(--red)'};
-            border:1px solid ${isPass ? '#A7F3D0' : '#FECACA'};
-          ">
+          <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;background:${isPass ? 'var(--green-lt)' : 'var(--red-lt)'};color:${isPass ? 'var(--green)' : 'var(--red)'};border:1px solid ${isPass ? '#A7F3D0' : '#FECACA'};">
             ${escapeHTML(status || 'unknown')}
           </span>
         </div>
-
-        <div style="
-          font-size:13px;
-          line-height:1.6;
-          color:var(--ink2);
-        ">
+        <div style="font-size:13px;line-height:1.6;color:var(--ink2);">
           ${escapeHTML(reason || 'No reason provided.')}
         </div>
       </div>
     `;
   }
 
+  function compactMetric(label, value, invert = false) {
+    const cls = evaluationScoreClass(value, invert);
+    const numericValue = Number(value);
+    const displayValue = Number.isFinite(numericValue) ? `${numericValue}/10` : '—';
+
+    return `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:0;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">
+          ${escapeHTML(label)}
+        </div>
+        <div style="font-size:18px;font-weight:700;line-height:1;color:var(--ink);" class="score-val ${cls}">
+          ${displayValue}
+        </div>
+      </div>
+    `;
+  }
+
   return `
-    <div style="
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:16px;
-    ">
-
-      <!-- HEADER -->
-
-      <div style="
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:10px;
-        flex-wrap:wrap;
-        margin-bottom:16px;
-      ">
-        <div style="
-          font-size:10px;
-          font-weight:700;
-          letter-spacing:0.5px;
-          text-transform:uppercase;
-          color:var(--ink4);
-        ">
+    <div id="scenario-eval-wrapper-${key}" onclick="if (!event.target.closest('button')) toggleEvaluationDetails('${key}')" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);">
           Evaluation Results
         </div>
-
-        <span style="
-          font-size:11px;
-          font-weight:700;
-          letter-spacing:0.5px;
-          text-transform:uppercase;
-          padding:5px 12px;
-          border-radius:999px;
-          background:${verdictBg};
-          color:${verdictColor};
-          border:1px solid ${verdictBorder};
-        ">
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:${verdictBg};color:${verdictColor};border:1px solid ${verdictBorder};">
           ${escapeHTML(verdict)}
         </span>
       </div>
 
-      <!-- SIMULATED RESPONSE -->
-
-      <div style="
-        margin-bottom:14px;
-        background:var(--surface2);
-        border:1px solid var(--border);
-        border-radius:10px;
-        padding:14px;
-      ">
-        <div style="
-          font-size:11px;
-          font-weight:700;
-          letter-spacing:0.4px;
-          text-transform:uppercase;
-          color:var(--ink4);
-          margin-bottom:8px;
-        ">
-          Simulated Agent Response
-        </div>
-
-        <div style="
-          font-size:13px;
-          line-height:1.7;
-          color:var(--ink2);
-          white-space:pre-wrap;
-        ">
-          ${escapeHTML(
-            safeEvaluation.simulated_response ||
-            'No simulated response generated.'
-          )}
-        </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px;">
+        ${compactMetric('Policy Compliance', safeEvaluation.policy_compliance)}
+        ${compactMetric('Refusal Correctness', safeEvaluation.refusal_correctness)}
+        ${compactMetric('Security Compliance', safeEvaluation.security_compliance)}
       </div>
 
-      <!-- SCORE GRID -->
-
-      <div style="
-        display:grid;
-        grid-template-columns:repeat(3,minmax(0,1fr));
-        gap:10px;
-        margin-bottom:14px;
-      ">
-        ${renderMetricBox(
-          'Policy Compliance',
-          safeEvaluation.policy_compliance
-        )}
-
-        ${renderMetricBox(
-          'Tone Quality',
-          safeEvaluation.tone_quality
-        )}
-
-        ${renderMetricBox(
-          'Security Compliance',
-          safeEvaluation.security_compliance
-        )}
-      </div>
-
-      <!-- SECOND GRID -->
-
-      <div style="
-        display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:10px;
-        margin-bottom:14px;
-      ">
-        ${renderMetricBox(
-          'Refusal Correctness',
-          safeEvaluation.refusal_correctness
-        )}
-
-        <div style="
-          background:var(--surface);
-          border:1px solid var(--border);
-          border-radius:10px;
-          padding:12px;
-        ">
-          <div style="
-            font-size:11px;
-            font-weight:700;
-            letter-spacing:0.4px;
-            text-transform:uppercase;
-            color:var(--ink4);
-            margin-bottom:8px;
-          ">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px;">
+        ${compactMetric('Tone Quality', safeEvaluation.tone_quality)}
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">
             Hallucination Risk
           </div>
-
-          <span class="risk-pill risk-${hallucinationClass}">
-            ${hallucinationLabel}
-          </span>
+          <span class="risk-pill risk-${hallucinationClass}">${hallucinationLabel}</span>
         </div>
       </div>
 
-      <!-- STATUS DETAILS -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+        <button
+          id="scenario-eval-toggle-${key}"
+          onclick="event.stopPropagation(); toggleEvaluationDetails('${key}')"
+          style="padding:7px 12px;background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-mid);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);">
+          View Results
+        </button>
+      </div>
 
-      <div style="
-        display:flex;
-        flex-direction:column;
-        gap:10px;
-        margin-bottom:14px;
-      ">
+      <div id="scenario-eval-details-${key}" style="display:none;flex-direction:column;gap:10px;">
+        <div style="margin-bottom:2px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">
+            Simulated Agent Response
+          </div>
+          <div style="font-size:13px;line-height:1.7;color:var(--ink2);white-space:pre-wrap;">
+            ${escapeHTML(safeEvaluation.simulated_response || 'No simulated response generated.')}
+          </div>
+        </div>
 
         ${renderStatus(
           'Policy Compliance Status',
@@ -1649,72 +1857,25 @@ function renderEvaluationResult(evaluation) {
           safeEvaluation.security_compliance_status,
           safeEvaluation.security_compliance_reason
         )}
-      </div>
 
-      <!-- OVERALL REASON -->
-
-      <div style="
-        margin-top:14px;
-        padding-top:14px;
-        border-top:1px solid var(--border);
-      ">
-        <div style="
-          font-size:11px;
-          font-weight:700;
-          letter-spacing:0.4px;
-          text-transform:uppercase;
-          color:var(--ink4);
-          margin-bottom:6px;
-        ">
-          Overall Evaluation
+        <div style="margin-top:2px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">
+            Overall Evaluation
+          </div>
+          <div style="font-size:13px;line-height:1.6;color:var(--ink2);">
+            ${escapeHTML(safeEvaluation.reason || 'No evaluation summary provided.')}
+          </div>
         </div>
 
-        <div style="
-          font-size:13px;
-          line-height:1.6;
-          color:var(--ink2);
-        ">
-          ${escapeHTML(
-            safeEvaluation.reason ||
-            'No evaluation summary provided.'
-          )}
+        <div style="margin-top:2px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">
+            Better Response
+          </div>
+          <div style="font-size:13px;line-height:1.7;color:var(--ink2);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;">
+            ${escapeHTML(safeEvaluation.better_response || 'No better response provided.')}
+          </div>
         </div>
       </div>
-
-      <!-- BETTER RESPONSE -->
-
-      <div style="
-        margin-top:14px;
-        padding-top:14px;
-        border-top:1px solid var(--border);
-      ">
-        <div style="
-          font-size:11px;
-          font-weight:700;
-          letter-spacing:0.4px;
-          text-transform:uppercase;
-          color:var(--ink4);
-          margin-bottom:8px;
-        ">
-          Better Response
-        </div>
-
-        <div style="
-          font-size:13px;
-          line-height:1.7;
-          color:var(--ink2);
-          background:var(--surface2);
-          border:1px solid var(--border);
-          border-radius:8px;
-          padding:12px;
-        ">
-          ${escapeHTML(
-            safeEvaluation.better_response ||
-            'No better response provided.'
-          )}
-        </div>
-      </div>
-
     </div>
   `;
 }
@@ -1726,14 +1887,17 @@ function renderScenarioCard(s, key) {
   const mt = s.multi_turn ? 'Yes' : 'No';
   const esc = s.escalation_required ? 'Yes' : 'No';
   const sev = String(s.severity || 'medium').toLowerCase();
-  const evaluationHtml = isPlaceholderEvaluation(s.evaluation) ? renderEvaluationPending(domKey) : renderEvaluationResult(s.evaluation);
-
+  const evaluationHtml = isPlaceholderEvaluation(s.evaluation)
+  ? renderEvaluationPending(domKey)
+  : renderEvaluationResult(s.evaluation, domKey);
+  const verdict = getScenarioVerdict(s);
+  const searchText = getScenarioSearchText(s);
   return `
-    <div id="scenario-card-${domKey}" data-scenario-key="${domKey}" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
+    <div class="scenario-card" id="scenario-card-${domKey}" data-scenario-key="${domKey}" data-scenario-id="${escapeHTML(s.id || '')}" data-scenario-title="${escapeHTML(s.scenario || s.user_input || '')}" data-search="${escapeHTML(searchText)}" data-category="${escapeHTML(getScenarioCategory(s))}" data-verdict="${escapeHTML(verdict)}" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:0.3px;margin-bottom:6px;">${escapeHTML(s.id || '')} · ${escapeHTML(prettyLabel(s.category || s.type || ''))}</div>
-          <div style="font-size:14px;color:var(--ink);font-weight:600;line-height:1.5;">${escapeHTML(s.scenario || s.user_input || '')}</div>
+          <div class="scenario-title" style="font-size:14px;color:var(--ink);font-weight:600;line-height:1.5;">${escapeHTML(s.scenario || s.user_input || '')}</div>
         </div>
         <span class="sev-badge sev-${escapeHTML(sev).toUpperCase()}">${escapeHTML(sev)} severity</span>
       </div>
@@ -1826,21 +1990,17 @@ async function runScenarioEvaluation(rawKey) {
 
     const evaluation = (data && typeof data.evaluation === 'object' && data.evaluation) ? data.evaluation : data;
     const normalizedEvaluation = {
-      // scores — use _score variants first, fall back to plain name
       policy_compliance: Number(evaluation.policy_compliance_score ?? evaluation.policy_compliance ?? 0),
       refusal_correctness: Number(evaluation.refusal_correctness_score ?? evaluation.refusal_correctness ?? 0),
       tone_quality: Number(evaluation.tone_quality ?? 0),
       security_compliance: Number(evaluation.security_compliance_score ?? evaluation.security_compliance ?? 0),
-      // hallucination stored as string "low/medium/high"
       hallucination_risk: String(evaluation.hallucination_risk || 'low').toLowerCase(),
-      // status + reason fields (all inside data.evaluation)
       policy_compliance_status: evaluation.policy_compliance_status || '',
       policy_compliance_reason: evaluation.policy_compliance_reason || '',
       refusal_correctness_status: evaluation.refusal_correctness_status || '',
       refusal_correctness_reason: evaluation.refusal_correctness_reason || '',
       security_compliance_status: evaluation.security_compliance_status || '',
       security_compliance_reason: evaluation.security_compliance_reason || '',
-      // simulated_response lives at top level of data, not inside evaluation
       simulated_response: data.simulated_response || '',
       overall_verdict: evaluation.overall_verdict || 'warn',
       reason: evaluation.reason || 'No reason provided.',
@@ -1854,7 +2014,7 @@ async function runScenarioEvaluation(rawKey) {
       if (idx >= 0) currentScenarioData.scenarios[idx].evaluation = normalizedEvaluation;
     }
 
-    panel.innerHTML = renderEvaluationResult(normalizedEvaluation);
+    panel.innerHTML = renderEvaluationResult(normalizedEvaluation, key);
 
     if (btn) {
       btn.disabled = false;
@@ -2005,6 +2165,20 @@ function renderDebugReport(turns) {
     </div>`).join('');
 }
 
+function setEvaluationDetails(key, open) {
+  const details = document.getElementById(`scenario-eval-details-${key}`);
+  const btn = document.getElementById(`scenario-eval-toggle-${key}`);
+  if (!details || !btn) return;
+  details.style.display = open ? 'flex' : 'none';
+  btn.textContent = open ? 'Hide Results' : 'View Results';
+}
+
+function toggleEvaluationDetails(key) {
+  const details = document.getElementById(`scenario-eval-details-${key}`);
+  if (!details) return;
+  const isHidden = details.style.display === 'none' || !details.style.display;
+  setEvaluationDetails(key, isHidden);
+}
 
 function renderScenariosReport(d) {
   const sc = (d.scenarios || []).map((s, idx) => ({

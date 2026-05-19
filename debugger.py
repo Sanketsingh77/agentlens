@@ -1,10 +1,9 @@
 import json
 import os
-from groq import Groq
 from dotenv import load_dotenv
+from llm_client import call_llm
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def load_conversation(filepath):
     with open(filepath, "r") as f:
@@ -43,11 +42,10 @@ Evaluate the agent's response and return ONLY a JSON object like this:
 
 Return ONLY the JSON. No extra text."""
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content
+    return call_llm(
+    messages=[{"role": "user", "content": prompt}],
+    temperature=0.3
+)
 
 def print_debug_report(filename, turns_analysis):
     print("\n" + "="*60)

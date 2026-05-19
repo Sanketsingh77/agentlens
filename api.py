@@ -12,10 +12,9 @@ from debugger import run_debugger
 from scenario_generator import run_scenario_generator
 
 from dotenv import load_dotenv
-from groq import Groq
+from llm_client import call_llm, extract_json_payload
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 app = FastAPI(
     title="AgentLens API",
@@ -51,13 +50,6 @@ class EvaluationRequest(BaseModel):
 # HELPER: JSON extraction
 # ─────────────────────────────────────────
 
-def extract_json_payload(raw_text: str) -> str:
-    text = raw_text.strip()
-    match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, flags=re.DOTALL | re.IGNORECASE)
-    if match:
-        return match.group(1).strip()
-    return text
-
 
 # ─────────────────────────────────────────
 # HELPER: analyze one conversation text
@@ -81,21 +73,13 @@ Analyze this conversation and return ONLY valid JSON, nothing else:
 Conversation to analyze:
 {conversation_text}
 """
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are an AI conversation quality evaluator. Always respond with valid JSON only."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.3
-    )
-    raw = response.choices[0].message.content
+    raw = call_llm(
+    messages=[
+        {"role": "system", "content": "..."},
+        {"role": "user", "content": "..."}
+    ],
+    temperature=0.3
+)
     cleaned = extract_json_payload(raw)
     return json.loads(cleaned)
 
@@ -141,22 +125,13 @@ Return this JSON exactly:
   "simulated_response": "<the agent response>"
 }}
 """
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": "You simulate AI agent responses. Always respond with valid JSON only."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.4
-    )
-
-    raw = response.choices[0].message.content or ""
+    raw = call_llm(
+    messages=[
+        {"role": "system", "content": "..."},
+        {"role": "user", "content": "..."}
+    ],
+    temperature=0.3
+) or ""
     cleaned = extract_json_payload(raw).strip()
 
     try:
@@ -227,22 +202,13 @@ Return this JSON exactly:
   "better_response": "<one improved agent response>"
 }}
 """
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are an AI agent testing and evaluation assistant. Return valid JSON only."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.2
-    )
-
-    raw = response.choices[0].message.content or ""
+    raw = call_llm(
+    messages=[
+        {"role": "system", "content": "..."},
+        {"role": "user", "content": "..."}
+    ],
+    temperature=0.3
+) or ""
     cleaned = extract_json_payload(raw).strip()
     data = json.loads(cleaned)
 
