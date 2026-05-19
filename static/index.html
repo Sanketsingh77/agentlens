@@ -1421,20 +1421,16 @@ function renderEvaluationResult(evaluation) {
       ? '#FECACA'
       : '#FDE68A';
 
-  const hallucinationValue = Number(
-    safeEvaluation.hallucination_risk || 0
-  );
+  const hallucinationRisk = String(safeEvaluation.hallucination_risk || 'low').toLowerCase();
 
   let hallucinationLabel = 'Low';
-
-  if (hallucinationValue >= 7) {
+  if (hallucinationRisk === 'high') {
     hallucinationLabel = 'High';
-  } else if (hallucinationValue >= 4) {
+  } else if (hallucinationRisk === 'medium') {
     hallucinationLabel = 'Medium';
   }
 
-  const hallucinationClass =
-    hallucinationLabel.toLowerCase();
+  const hallucinationClass = hallucinationLabel.toLowerCase();
 
   function renderStatus(label, status, reason) {
     const normalized =
@@ -1830,11 +1826,22 @@ async function runScenarioEvaluation(rawKey) {
 
     const evaluation = (data && typeof data.evaluation === 'object' && data.evaluation) ? data.evaluation : data;
     const normalizedEvaluation = {
-      policy_compliance: Number(evaluation.policy_compliance ?? 0),
-      refusal_correctness: Number(evaluation.refusal_correctness ?? 0),
+      // scores — use _score variants first, fall back to plain name
+      policy_compliance: Number(evaluation.policy_compliance_score ?? evaluation.policy_compliance ?? 0),
+      refusal_correctness: Number(evaluation.refusal_correctness_score ?? evaluation.refusal_correctness ?? 0),
       tone_quality: Number(evaluation.tone_quality ?? 0),
-      hallucination_risk: Number(evaluation.hallucination_risk ?? 0),
-      security_compliance: Number(evaluation.security_compliance ?? 0),
+      security_compliance: Number(evaluation.security_compliance_score ?? evaluation.security_compliance ?? 0),
+      // hallucination stored as string "low/medium/high"
+      hallucination_risk: String(evaluation.hallucination_risk || 'low').toLowerCase(),
+      // status + reason fields (all inside data.evaluation)
+      policy_compliance_status: evaluation.policy_compliance_status || '',
+      policy_compliance_reason: evaluation.policy_compliance_reason || '',
+      refusal_correctness_status: evaluation.refusal_correctness_status || '',
+      refusal_correctness_reason: evaluation.refusal_correctness_reason || '',
+      security_compliance_status: evaluation.security_compliance_status || '',
+      security_compliance_reason: evaluation.security_compliance_reason || '',
+      // simulated_response lives at top level of data, not inside evaluation
+      simulated_response: data.simulated_response || '',
       overall_verdict: evaluation.overall_verdict || 'warn',
       reason: evaluation.reason || 'No reason provided.',
       better_response: evaluation.better_response || 'No improved response provided.',
