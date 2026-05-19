@@ -1246,6 +1246,7 @@ async function runDebug() {
 }
 
 /* ─── SCENARIOS ──────────────────────────── */
+
 async function runScenarios() {
   const desc = document.getElementById('sc-input').value.trim();
   const ld   = document.getElementById('sl');
@@ -1269,8 +1270,13 @@ async function runScenarios() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail || 'Request failed');
 
-    const sc = d.scenarios || [];
-    currentScenarioData = d;
+    const sc = (d.scenarios || []).map((s, idx) => ({
+      ...s,
+      _uiKey: scenarioDomKey(s.id || s.scenario || s.user_input || idx)
+    }));
+
+    currentScenarioData = { ...d, scenarios: sc };
+
     document.getElementById('sr-count').textContent = sc.length + ' scenarios';
     exp.disabled = false;
     exp.style.opacity = '1';
@@ -1287,7 +1293,7 @@ async function runScenarios() {
     document.getElementById('sr-body').innerHTML = Object.entries(groups).map(([type, items]) => `
       <div class="${cls[type]}">
         <div class="sg-hdr">${labels[type]}</div>
-        ${items.length ? items.map(renderScenarioCard).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
+        ${items.length ? items.map((s) => renderScenarioCard(s, s._uiKey)).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
       </div>`).join('');
 
     rs.classList.add('show');
@@ -1309,24 +1315,96 @@ function downloadScenarios() {
   URL.revokeObjectURL(url);
 }
 
-function renderScenarioCard(s) {
-  const evalDims = ((s.evaluation && s.evaluation.dimensions) || [
-    'policy_compliance',
-    'refusal_correctness',
-    'tone_quality',
-    'escalation_handling',
-    'hallucination_risk',
-    'security_compliance'
-  ]).map(d => `<span style="display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:11px;color:var(--ink3);">${escapeHTML(prettyLabel(d))} · Pending evaluation</span>`).join('');
 
+function scenarioDomKey(raw) {
+  const key = String(raw ?? '')
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return key || ('sc-' + Math.random().toString(36).slice(2, 8));
+}
+
+function evaluationScoreClass(value, invert = false) {
+  const v = Number(value);
+  if (!Number.isFinite(v)) return 'mid';
+  if (invert) return v >= 7 ? 'bad' : v >= 4 ? 'mid' : 'good';
+  return v >= 7 ? 'good' : v >= 4 ? 'mid' : 'bad';
+}
+
+function renderMetricBox(label, value, invert = false) {
+  const cls = evaluationScoreClass(value, invert);
+  const displayValue = Number.isFinite(Number(value)) ? `${value}/10` : '—';
+  return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;min-width:0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">${escapeHTML(label)}</div>
+      <div style="font-size:20px;font-weight:700;line-height:1;color:var(--ink);margin-bottom:4px;" class="score-val ${cls}">${displayValue}</div>
+    </div>`;
+}
+
+function renderEvaluationPending(key) {
+  return `
+    <div style="background:var(--surface);border:1px dashed var(--border2);border-radius:10px;padding:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px;">Evaluation</div>
+          <div style="font-size:13px;color:var(--ink3);">Not evaluated yet.</div>
+        </div>
+        <button
+          id="eval-btn-${key}"
+          onclick="runScenarioEvaluation('${key}')"
+          style="padding:8px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);box-shadow:0 1px 3px rgba(37,99,235,0.25);">
+          Run Evaluation
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderEvaluationResult(evaluation) {
+  const verdict = String(evaluation?.overall_verdict || 'warn').toLowerCase();
+  const verdictBg = verdict === 'pass' ? 'var(--green-lt)' : verdict === 'fail' ? 'var(--red-lt)' : 'var(--amber-lt)';
+  const verdictColor = verdict === 'pass' ? 'var(--green)' : verdict === 'fail' ? 'var(--red)' : 'var(--amber)';
+  const verdictBorder = verdict === 'pass' ? '#A7F3D0' : verdict === 'fail' ? '#FECACA' : '#FDE68A';
+
+  return `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);">Evaluation Results</div>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:${verdictBg};color:${verdictColor};border:1px solid ${verdictBorder};">
+          ${escapeHTML(verdict)}
+        </span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+        ${renderMetricBox('Policy Compliance', evaluation?.policy_compliance)}
+        ${renderMetricBox('Refusal Correctness', evaluation?.refusal_correctness)}
+        ${renderMetricBox('Tone Quality', evaluation?.tone_quality)}
+        ${renderMetricBox('Hallucination Risk', evaluation?.hallucination_risk, true)}
+        ${renderMetricBox('Security Compliance', evaluation?.security_compliance)}
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Reason</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--ink2);">${escapeHTML(evaluation?.reason || 'No reason provided.')}</div>
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Better Response</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--ink2);background:var(--surface2);border:1px solid var(--border);padding:10px 12px;border-radius:8px;">${escapeHTML(evaluation?.better_response || 'No improved response provided.')}</div>
+      </div>
+    </div>`;
+}
+
+function renderScenarioCard(s, key) {
+  const domKey = scenarioDomKey(key ?? s._uiKey ?? s.id ?? s.scenario ?? s.user_input);
   const failureModes = (s.failure_modes || []).map(f => `<li>${escapeHTML(f)}</li>`).join('');
   const tags = (s.tags || []).map(t => `<span style="display:inline-block;padding:4px 8px;border-radius:999px;background:var(--blue-lt);border:1px solid var(--blue-mid);font-size:11px;color:var(--blue);">${escapeHTML(t)}</span>`).join('');
   const mt = s.multi_turn ? 'Yes' : 'No';
   const esc = s.escalation_required ? 'Yes' : 'No';
   const sev = String(s.severity || 'medium').toLowerCase();
+  const evaluationHtml = s.evaluation ? renderEvaluationResult(s.evaluation) : renderEvaluationPending(domKey);
 
   return `
-    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
+    <div id="scenario-card-${domKey}" data-scenario-key="${domKey}" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:0.3px;margin-bottom:6px;">${escapeHTML(s.id || '')} · ${escapeHTML(prettyLabel(s.category || s.type || ''))}</div>
@@ -1369,13 +1447,86 @@ function renderScenarioCard(s) {
         <div style="display:flex;flex-wrap:wrap;gap:6px;">${tags || '<span style="font-size:13px;color:var(--ink4);">None</span>'}</div>
       </div>
 
-      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Evaluation · Pending evaluation</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">${evalDims}</div>
+      <div id="scenario-eval-${domKey}" style="margin-top:12px;">
+        ${evaluationHtml}
       </div>
     </div>`;
 }
 
+async function runScenarioEvaluation(rawKey) {
+  const key = scenarioDomKey(rawKey);
+  const scenario = currentScenarioData?.scenarios?.find(s => scenarioDomKey(s._uiKey ?? s.id ?? s.scenario ?? s.user_input) === key);
+  if (!scenario) {
+    alert('Scenario not found.');
+    return;
+  }
+
+  const btn = document.getElementById(`eval-btn-${key}`);
+  const panel = document.getElementById(`scenario-eval-${key}`);
+  if (!panel) return;
+
+  const originalBtnText = btn ? btn.textContent : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Evaluating...';
+    btn.style.opacity = '0.75';
+  }
+
+  panel.innerHTML = `
+    <div style="background:var(--surface);border:1px dashed var(--border2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;color:var(--ink3);font-size:13px;">
+      <div class="spinner" style="width:16px;height:16px;"></div>
+      Running evaluation against the model...
+    </div>`;
+
+  try {
+    const payload = {
+      agent_description: currentScenarioData?.agent_description || '',
+      scenario: scenario.scenario || scenario.user_input || '',
+      category: scenario.category || scenario.type || null,
+      subcategory: scenario.subcategory || null,
+      policy_area: scenario.policy_area || null,
+      failure_modes: scenario.failure_modes || []
+    };
+
+    const response = await fetch(API + '/evaluate-scenario', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.detail || 'Evaluation failed');
+    }
+
+    const evaluation = data.evaluation || {};
+    scenario.evaluation = evaluation;
+    if (currentScenarioData?.scenarios) {
+      const idx = currentScenarioData.scenarios.findIndex(s => s._uiKey === scenario._uiKey);
+      if (idx >= 0) currentScenarioData.scenarios[idx].evaluation = evaluation;
+    }
+
+    panel.innerHTML = renderEvaluationResult(evaluation);
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Re-run Evaluation';
+      btn.style.opacity = '1';
+    }
+  } catch (error) {
+    panel.innerHTML = `
+      <div style="background:var(--red-lt);border:1px solid #FECACA;border-radius:10px;padding:14px;color:var(--red);font-size:13px;line-height:1.6;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">Evaluation failed</div>
+        ${escapeHTML(error.message)}
+      </div>`;
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = originalBtnText || 'Run Evaluation';
+      btn.style.opacity = '1';
+    }
+  }
+}
 /* ─── REPORTS */
 async function loadReports() {
   try {
@@ -1506,9 +1657,15 @@ function renderDebugReport(turns) {
     </div>`).join('');
 }
 
+
 function renderScenariosReport(d) {
+  const sc = (d.scenarios || []).map((s, idx) => ({
+    ...s,
+    _uiKey: s._uiKey || scenarioDomKey(s.id || s.scenario || s.user_input || idx)
+  }));
+
   const groups = { normal:[], edge_case:[], adversarial:[] };
-  (d.scenarios||[]).forEach(s => {
+  sc.forEach(s => {
     const cat = String(s.category || s.type || '').toLowerCase();
     if (groups[cat]) groups[cat].push(s);
   });
@@ -1522,7 +1679,7 @@ function renderScenariosReport(d) {
         ${labels[type]}
         <span style="flex:1;height:1px;background:var(--border);display:block;"></span>
       </div>
-      ${items.length ? items.map(renderScenarioCard).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
+      ${items.length ? items.map((s) => renderScenarioCard(s, s._uiKey)).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
     </div>`).join('');
 }
 
