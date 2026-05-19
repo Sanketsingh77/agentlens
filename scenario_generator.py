@@ -95,10 +95,19 @@ category must be one of: normal / edge_case / adversarial
 """
 
     return call_llm(
-    messages=[...],
-    temperature=0.85,
-    max_tokens=6000
-)
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a senior AI evaluation engineer building a professional QA test suite. Return only valid JSON."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.85,
+        max_tokens=6000
+    )
 
 
 def extract_json_payload(raw_text: str) -> str:
@@ -281,12 +290,20 @@ def run_scenario_generator(agent_description):
 
     raw = generate_scenarios(agent_description)
 
+    if not raw or not str(raw).strip():
+        print("Error parsing scenarios: empty model response")
+        return []
+
     try:
         cleaned = extract_json_payload(raw)
+        if not cleaned:
+            print("Error parsing scenarios: empty cleaned response")
+            return []
+
         scenarios = json.loads(cleaned)
     except json.JSONDecodeError as e:
         print(f"Error parsing scenarios: {e}")
-        print(f"Raw response (first 500 chars): {raw[:500]}")
+        print(f"Raw response (first 500 chars): {str(raw)[:500]}")
         return []
 
     scenarios = validate_and_fix(scenarios)
