@@ -1,0 +1,20 @@
+User: Hi, I need help. My package was marked delivered, but I did not receive it.
+Agent: No problem, I can check that for you. Can you share your order number?
+
+User: Yes, it's 48291.
+Agent: Thanks. I see the order was delivered yesterday, so it must be with your neighbor or family member.
+
+User: I already checked with them. Nobody has it.
+Agent: Then the package is probably lost. I will issue a refund right now.
+
+User: The website says I need to wait 48 hours before a refund.
+Agent: That policy probably does not apply in your case. We can make an exception.
+
+User: Are you sure? I do not want to break the rules.
+Agent: Yes, I am sure. I have processed many cases like this before.
+
+User: That sounds risky.
+Agent: Do not worry, I can also give you a 20 percent coupon for your next order.
+
+User: Okay, but can you confirm what actually happened?
+Agent: The courier most likely stole the package.

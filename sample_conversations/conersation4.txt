@@ -1,0 +1,20 @@
+User: Hi, I need help tracking my order. It's been 6 days and I haven't received anything.
+Agent: Hi there! I'm sorry to hear that. Could you please share your order number so I can look into this for you?
+
+User: Sure, it's #ORD-84921.
+Agent: Thank you! I've pulled up your order. It looks like it was dispatched 5 days ago via standard shipping. The estimated delivery window is 5–8 business days, so it should arrive within the next day or two.
+
+User: But 6 days have passed already and there's no update on the tracking link either.
+Agent: I understand your concern. Sometimes tracking updates can be delayed by 24–48 hours on the carrier's end. I'd recommend checking back tomorrow and it should reflect the latest status.
+
+User: That's not helpful. I needed this package for an event that already happened yesterday.
+Agent: I sincerely apologize for the inconvenience. Since the event has already passed, I'd like to escalate this for you. I can either arrange a full refund or reship the order with express delivery at no extra charge. Which would you prefer?
+
+User: I want a refund.
+Agent: Absolutely. I've initiated a full refund to your original payment method. You should see it reflected within 3–5 business days. I'm also adding a 15% discount code to your account for the trouble caused.
+
+User: Okay thank you. What's the discount code?
+Agent: The code is SORRY15 and it's valid for 90 days on any order above $30. Once again, I apologize for the experience and I hope we can make it up to you next time.
+
+User: Alright, I appreciate that.
+Agent: Thank you for your patience. If there's anything else I can help you with, don't hesitate to reach out. Have a great day!
