@@ -111,8 +111,6 @@ agentlens/
 │
 ├── sample_conversations/
 │
-├── reports/
-│
 ├── api.py
 ├── main.py
 ├── debugger.py
