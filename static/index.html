@@ -1375,7 +1375,7 @@ body {
     <div class="topbar">
       <div>
         <div class="page-heading">Scenario Generator</div>
-        <div class="page-sub">Auto-generate 15 test cases — normal, edge, and adversarial</div>
+        <div class="page-sub">Auto-generate test cases — normal, edge, and adversarial</div>
       </div>
       <div class="topbar-pill">AI-Generated</div>
     </div>
@@ -1384,7 +1384,7 @@ body {
 
       <textarea class="scenario-ta" id="sc-input"
         placeholder="Describe your AI agent…&#10;Example: A customer support agent for an e-commerce store that handles orders, returns, and complaints"></textarea>
-      <button class="btn" onclick="runScenarios()">Generate 15 Scenarios</button>
+      <button class="btn" onclick="runScenarios()">Generate Scenarios</button>
 
       <div class="loading" id="sl">
         <div class="spinner"></div>
@@ -1444,7 +1444,7 @@ body {
 </main>
 
 <script>
-const API = (window.location && window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'http://127.0.0.1:8000';
+const API = window.location.origin;
 let currentScenarioData = null;
 let scenarioFilters = { category: 'all', verdict: 'all', search: '' };
 let scenarioGroupState = { normal: true, edge_case: true, adversarial: true };
