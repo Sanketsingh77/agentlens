@@ -489,154 +489,6 @@ body {
 
 .result-body { padding: 24px; }
 
-/* ─── SCENARIO EXPLORER ─────────────────────────────── */
-.scenario-explorer {
-  position: static;
-  z-index: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-}
-
-.scenario-explorer-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.scenario-search {
-  flex: 1;
-  min-width: 220px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface2);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 13px;
-  outline: none;
-}
-
-.scenario-search:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
-}
-
-.scenario-select {
-  min-width: 260px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface2);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 13px;
-  outline: none;
-}
-
-.scenario-chip-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.scenario-chip {
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--ink3);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--sans);
-}
-
-.scenario-chip.active {
-  background: var(--blue-lt);
-  color: var(--blue);
-  border-color: var(--blue-mid);
-}
-
-.scenario-explorer-meta {
-  display: none;
-  margin-top: 10px;
-}
-
-.scenario-summary-strip {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.scenario-summary-pill {
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--ink2);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.scenario-jump-list {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.scenario-jump-item {
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--blue-mid);
-  background: var(--blue-lt);
-  color: var(--blue);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--sans);
-  max-width: 100%;
-}
-
-.scenario-jump-item span {
-  display: inline-block;
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: bottom;
-}
-
-.scenario-card {
-  scroll-margin-top: 180px;
-}
-
-.scenario-card .scenario-title {
-  cursor: pointer;
-}
-
-
-.scenario-verdict-pill {
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--ink3);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.scenario-verdict-pass { background: var(--green-lt); color: var(--green); border-color: #A7F3D0; }
-.scenario-verdict-warn { background: var(--amber-lt); color: var(--amber); border-color: #FDE68A; }
-.scenario-verdict-fail { background: var(--red-lt); color: var(--red); border-color: #FECACA; }
-.scenario-verdict-pending { background: var(--surface3); color: var(--ink4); border-color: var(--border); }
-
 /* ─── SCORE CARDS ───────────────────────────────────── */
 .score-row {
   display: grid;
@@ -995,187 +847,6 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
 
-
-/* ─── SCENARIO ACCORDION / FILTERS ─────────────────── */
-.scenario-explorer {
-  position: static;
-  z-index: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-}
-
-.scenario-explorer-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.scenario-search {
-  flex: 1;
-  min-width: 240px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface2);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 13px;
-  outline: none;
-}
-
-.scenario-search:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
-}
-
-.scenario-chip-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.scenario-chip {
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--ink3);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--sans);
-}
-
-.scenario-chip.active {
-  background: var(--blue-lt);
-  color: var(--blue);
-  border-color: var(--blue-mid);
-}
-
-.scenario-group {
-  margin-bottom: 18px;
-}
-
-.scenario-group-header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 2px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: inherit;
-  font-family: var(--sans);
-  text-align: left;
-}
-
-.scenario-group-title {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.scenario-group-title::after {
-  content: '';
-  width: 120px;
-  height: 1px;
-  background: var(--border);
-  display: inline-block;
-}
-
-.scenario-group-count {
-  font-size: 12px;
-  color: var(--ink4);
-  font-weight: 600;
-}
-
-.scenario-group-body {
-  margin-top: 2px;
-}
-
-.scenario-card {
-  scroll-margin-top: 170px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  box-shadow: var(--shadow-sm);
-}
-
-.scenario-card-header {
-  width: 100%;
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
-  font-family: var(--sans);
-}
-
-.scenario-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.scenario-card-title {
-  font-size: 14px;
-  color: var(--ink);
-  font-weight: 600;
-  line-height: 1.5;
-}
-
-.scenario-card-meta {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink4);
-  letter-spacing: 0.3px;
-  margin-bottom: 6px;
-}
-
-.scenario-card-details {
-  display: none;
-  margin-top: 12px;
-}
-
-.scenario-card.is-open .scenario-card-details {
-  display: block;
-}
-
-.scenario-card-toggle {
-  margin-left: auto;
-  flex-shrink: 0;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--blue-mid);
-  background: var(--blue-lt);
-  color: var(--blue);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: var(--sans);
-}
-
-.scenario-card.is-open .scenario-card-toggle {
-  background: var(--surface3);
-  color: var(--ink3);
-  border-color: var(--border);
-}
-
 </style>
 </head>
 <body>
@@ -1375,7 +1046,7 @@ body {
     <div class="topbar">
       <div>
         <div class="page-heading">Scenario Generator</div>
-        <div class="page-sub">Auto-generate test cases — normal, edge, and adversarial</div>
+        <div class="page-sub">Auto-generate 15 test cases — normal, edge, and adversarial</div>
       </div>
       <div class="topbar-pill">AI-Generated</div>
     </div>
@@ -1384,7 +1055,7 @@ body {
 
       <textarea class="scenario-ta" id="sc-input"
         placeholder="Describe your AI agent…&#10;Example: A customer support agent for an e-commerce store that handles orders, returns, and complaints"></textarea>
-      <button class="btn" onclick="runScenarios()">Generate Scenarios</button>
+      <button class="btn" onclick="runScenarios()">Generate 15 Scenarios</button>
 
       <div class="loading" id="sl">
         <div class="spinner"></div>
@@ -1395,25 +1066,7 @@ body {
         <span id="se-msg"></span>
       </div>
 
-      
-      <div class="scenario-explorer" id="scenario-explorer" style="display:none;">
-        <div class="scenario-explorer-row" style="margin-bottom:10px;">
-          <input id="scenario-search" class="scenario-search" type="search" placeholder="Search scenarios, ids, subcategories, policy areas…" oninput="applyScenarioFilters()"/>
-        </div>
-        <div class="scenario-chip-row" style="margin-bottom:8px;">
-          <button class="scenario-chip active" data-filter-group="category" data-filter-value="all" onclick="setScenarioFilter('category','all',this)">All Categories</button>
-          <button class="scenario-chip" data-filter-group="category" data-filter-value="normal" onclick="setScenarioFilter('category','normal',this)">Normal</button>
-          <button class="scenario-chip" data-filter-group="category" data-filter-value="edge_case" onclick="setScenarioFilter('category','edge_case',this)">Edge Cases</button>
-          <button class="scenario-chip" data-filter-group="category" data-filter-value="adversarial" onclick="setScenarioFilter('category','adversarial',this)">Adversarial</button>
-          <button class="scenario-chip active" data-filter-group="verdict" data-filter-value="all" onclick="setScenarioFilter('verdict','all',this)">All Verdicts</button>
-          <button class="scenario-chip" data-filter-group="verdict" data-filter-value="pass" onclick="setScenarioFilter('verdict','pass',this)">Pass</button>
-          <button class="scenario-chip" data-filter-group="verdict" data-filter-value="warn" onclick="setScenarioFilter('verdict','warn',this)">Warn</button>
-          <button class="scenario-chip" data-filter-group="verdict" data-filter-value="fail" onclick="setScenarioFilter('verdict','fail',this)">Fail</button>
-        </div>
-      </div>
-
       <div class="result" id="sr">
-
         <div class="result-hdr">
           <div class="result-title">Generated Test Scenarios</div>
           <div style="display:flex;align-items:center;gap:8px;">
@@ -1444,10 +1097,8 @@ body {
 </main>
 
 <script>
-const API = 'http://127.0.0.1:8000';
+const API = window.location.origin;
 let currentScenarioData = null;
-let scenarioFilters = { category: 'all', verdict: 'all', search: '' };
-let scenarioGroupState = { normal: true, edge_case: true, adversarial: true };
 
 function escapeHTML(value) {
   return String(value ?? '')
@@ -1460,263 +1111,6 @@ function escapeHTML(value) {
 
 function prettyLabel(value) {
   return String(value || '').replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
-}
-
-function getScenarioCategory(s) {
-  return String(s?.category || s?.type || '').toLowerCase();
-}
-
-function getScenarioVerdict(s) {
-  const evaluation = s && typeof s.evaluation === 'object' ? s.evaluation : null;
-  if (!evaluation || evaluation._evaluated === false) return 'pending';
-  return String(evaluation.overall_verdict || 'pending').toLowerCase();
-}
-
-function getScenarioVerdictLabel(s) {
-  const verdict = getScenarioVerdict(s);
-  return verdict === 'pending' ? 'Not evaluated' : verdict.toUpperCase();
-}
-
-function getScenarioSearchText(s) {
-  return [
-    s.id,
-    s.scenario,
-    s.user_input,
-    s.subcategory,
-    s.policy_area,
-    s.category,
-    s.type,
-    s.severity,
-    s.expected_behavior,
-    ...(s.tags || []),
-    ...(s.failure_modes || [])
-  ].filter(Boolean).join(' ').toLowerCase();
-}
-
-
-function setScenarioFilter(group, value, btn) {
-  const current = scenarioFilters[group];
-  const next = (current === value && value !== 'all') ? 'all' : value;
-  scenarioFilters[group] = next;
-
-  document.querySelectorAll(`[data-filter-group="${group}"]`).forEach(el => el.classList.remove('active'));
-  const activeBtn = document.querySelector(`[data-filter-group="${group}"][data-filter-value="${next}"]`);
-  if (activeBtn) activeBtn.classList.add('active');
-
-  applyScenarioFilters();
-}
-
-function scrollToScenario(key, openDetails = true) {
-  const card = document.getElementById(`scenario-card-${key}`);
-  if (!card) return;
-  if (openDetails) setScenarioCardOpen(key, true);
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  card.style.outline = '2px solid rgba(37,99,235,0.18)';
-  setTimeout(() => { card.style.outline = 'none'; }, 1200);
-}
-
-function setScenarioCardOpen(key, open) {
-  const card = document.getElementById(`scenario-card-${key}`);
-  const btn = document.getElementById(`scenario-card-toggle-${key}`);
-  if (!card || !btn) return;
-  card.classList.toggle('is-open', open);
-  btn.textContent = open ? 'Collapse' : 'Expand';
-}
-
-function toggleScenarioCard(key) {
-  const card = document.getElementById(`scenario-card-${key}`);
-  const btn = document.getElementById(`scenario-card-toggle-${key}`);
-  if (!card) return;
-  const open = !card.classList.contains('is-open');
-  card.classList.toggle('is-open', open);
-  if (btn) btn.textContent = open ? 'Collapse' : 'Expand';
-}
-
-function toggleScenarioGroup(type) {
-  const body = document.getElementById(`scenario-group-body-${type}`);
-  const btn = document.getElementById(`scenario-group-toggle-${type}`);
-  if (!body) return;
-  const hidden = getComputedStyle(body).display === 'none';
-  body.style.display = hidden ? 'block' : 'none';
-  if (btn) btn.textContent = hidden ? 'Collapse' : 'Expand';
-  scenarioGroupState[type] = hidden;
-}
-
-function getVisibleScenarioCards() {
-  return Array.from(document.querySelectorAll('[id^="scenario-card-"]')).filter(el => el.style.display !== 'none');
-}
-
-function applyScenarioFilters() {
-  const search = document.getElementById('scenario-search');
-  scenarioFilters.search = search ? search.value.trim().toLowerCase() : scenarioFilters.search;
-
-  const cards = Array.from(document.querySelectorAll('[id^="scenario-card-"]'));
-  const visibleCards = [];
-
-  cards.forEach(card => {
-    const cat = (card.dataset.category || '').toLowerCase();
-    const verdict = (card.dataset.verdict || '').toLowerCase();
-    const text = (card.dataset.search || '').toLowerCase();
-    const matchesSearch = !scenarioFilters.search || text.includes(scenarioFilters.search);
-    const matchesCategory = scenarioFilters.category === 'all' || cat === scenarioFilters.category;
-    const matchesVerdict = scenarioFilters.verdict === 'all' || verdict === scenarioFilters.verdict;
-    const visible = matchesSearch && matchesCategory && matchesVerdict;
-    card.style.display = visible ? '' : 'none';
-    if (visible) visibleCards.push(card);
-  });
-
-  document.querySelectorAll('[data-scenario-group]').forEach(group => {
-    const type = group.dataset.scenarioGroup;
-    const groupVisible = Array.from(group.querySelectorAll('[id^="scenario-card-"]')).some(card => card.style.display !== 'none');
-    group.style.display = groupVisible ? '' : 'none';
-    const body = document.getElementById(`scenario-group-body-${type}`);
-    const btn = document.getElementById(`scenario-group-toggle-${type}`);
-    if (body && btn) {
-      const shouldOpen = !!scenarioGroupState[type];
-      body.style.display = shouldOpen ? 'block' : 'none';
-      btn.textContent = shouldOpen ? 'Collapse' : 'Expand';
-    }
-  });
-}
-
-function updateScenarioNavigator() {
-  // simplified UI: no quick jump / global navigator
-}
-
-function toggleScenarioExplorerMeta() {
-  // removed: kept only for backward compatibility
-}
-
-function jumpToSelectedScenario() {
-  // removed: kept only for backward compatibility
-}
-
-function expandAllScenarioEvaluations() {
-  document.querySelectorAll('[id^="scenario-card-"]').forEach(card => {
-    const key = card.id.replace('scenario-card-', '');
-    setScenarioCardOpen(key, true);
-  });
-}
-
-function collapseAllScenarioEvaluations() {
-  document.querySelectorAll('[id^="scenario-card-"]').forEach(card => {
-    const key = card.id.replace('scenario-card-', '');
-    setScenarioCardOpen(key, false);
-  });
-}
-function scrollToScenario(key, openDetails = true) {
-  const card = document.getElementById(`scenario-card-${key}`);
-  if (!card) return;
-  if (openDetails) {
-    const details = document.getElementById(`scenario-eval-details-${key}`);
-    const toggle = document.getElementById(`scenario-eval-toggle-${key}`);
-    if (details && toggle) {
-      details.style.display = 'flex';
-      toggle.textContent = 'Hide Results';
-    }
-  }
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  card.style.outline = '2px solid rgba(37,99,235,0.18)';
-  setTimeout(() => { card.style.outline = 'none'; }, 1200);
-}
-
-function jumpToSelectedScenario() {
-  const sel = document.getElementById('scenario-jump');
-  if (!sel || !sel.value) return;
-  scrollToScenario(sel.value, true);
-  toggleScenarioExplorerMeta(false);
-}
-
-function setAllScenarioEvaluations(open) {
-  document.querySelectorAll('[id^="scenario-eval-details-"]').forEach(el => {
-    const key = el.id.replace('scenario-eval-details-', '');
-    const btn = document.getElementById(`scenario-eval-toggle-${key}`);
-    el.style.display = open ? 'flex' : 'none';
-    if (btn) btn.textContent = open ? 'Hide Results' : 'View Results';
-  });
-}
-
-function expandAllScenarioEvaluations() {
-  setAllScenarioEvaluations(true);
-}
-
-function collapseAllScenarioEvaluations() {
-  setAllScenarioEvaluations(false);
-}
-
-function getVisibleScenarioCards() {
-  return Array.from(document.querySelectorAll('[id^="scenario-card-"]')).filter(el => el.style.display !== 'none');
-}
-
-function updateScenarioNavigator(visibleCards) {
-  const cards = visibleCards && visibleCards.length ? visibleCards : getVisibleScenarioCards();
-  const jump = document.getElementById('scenario-jump');
-  const jumpList = document.getElementById('scenario-jump-list');
-  const strip = document.getElementById('scenario-summary-strip');
-
-  if (jump) {
-    const current = jump.value;
-    jump.innerHTML = '<option value="">Jump to a scenario…</option>' + cards.map(card => {
-      const key = card.dataset.scenarioKey || card.id.replace('scenario-card-', '');
-      const id = card.dataset.scenarioId || key;
-      const title = card.dataset.scenarioTitle || '';
-      const display = title.length > 56 ? title.slice(0, 56) + '…' : title;
-      return `<option value="${escapeHTML(key)}">${escapeHTML(id)} — ${escapeHTML(display)}</option>`;
-    }).join('');
-    if (current && [...jump.options].some(opt => opt.value === current)) jump.value = current;
-  }
-
-  if (jumpList) {
-    jumpList.innerHTML = cards.slice(0, 8).map(card => {
-      const key = card.dataset.scenarioKey || card.id.replace('scenario-card-', '');
-      const id = card.dataset.scenarioId || key;
-      const title = card.dataset.scenarioTitle || '';
-      return `<button class="scenario-jump-item" onclick="scrollToScenario('${escapeHTML(key)}', true); toggleScenarioExplorerMeta(false)"><span>${escapeHTML(id)} — ${escapeHTML(title)}</span></button>`;
-    }).join('') || '<div style="font-size:13px;color:var(--ink4);">No scenarios match the current filters.</div>';
-  }
-
-  if (strip) {
-    const total = currentScenarioData?.scenarios?.length || 0;
-    const counts = { pass:0, warn:0, fail:0, pending:0 };
-    (currentScenarioData?.scenarios || []).forEach(s => {
-      const verdict = getScenarioVerdict(s);
-      if (counts[verdict] !== undefined) counts[verdict] += 1;
-      else counts.pending += 1;
-    });
-    strip.innerHTML = `
-      <span class="scenario-summary-pill">${cards.length} visible / ${total} total</span>
-      <span class="scenario-summary-pill">${counts.pass} PASS</span>
-      <span class="scenario-summary-pill">${counts.warn} WARN</span>
-      <span class="scenario-summary-pill">${counts.fail} FAIL</span>
-      <span class="scenario-summary-pill">${counts.pending} Not evaluated</span>
-    `;
-  }
-}
-
-function applyScenarioFilters() {
-  const search = document.getElementById('scenario-search');
-  scenarioFilters.search = search ? search.value.trim().toLowerCase() : scenarioFilters.search;
-
-  const cards = Array.from(document.querySelectorAll('[id^="scenario-card-"]'));
-  const visibleCards = [];
-
-  cards.forEach(card => {
-    const cat = (card.dataset.category || '').toLowerCase();
-    const verdict = (card.dataset.verdict || '').toLowerCase();
-    const text = (card.dataset.search || '').toLowerCase();
-    const matchesSearch = !scenarioFilters.search || text.includes(scenarioFilters.search);
-    const matchesCategory = scenarioFilters.category === 'all' || cat === scenarioFilters.category;
-    const matchesVerdict = scenarioFilters.verdict === 'all' || verdict === scenarioFilters.verdict;
-    const visible = matchesSearch && matchesCategory && matchesVerdict;
-    card.style.display = visible ? '' : 'none';
-    if (visible) visibleCards.push(card);
-  });
-
-  document.querySelectorAll('[data-scenario-group]').forEach(group => {
-    const groupVisible = Array.from(group.querySelectorAll('[id^="scenario-card-"]')).some(card => card.style.display !== 'none');
-    group.style.display = groupVisible ? '' : 'none';
-  });
-
 }
 
 /* ─── TAB SWITCHING ──────────────────────── */
@@ -1852,8 +1246,6 @@ async function runDebug() {
 }
 
 /* ─── SCENARIOS ──────────────────────────── */
-
-
 async function runScenarios() {
   const desc = document.getElementById('sc-input').value.trim();
   const ld   = document.getElementById('sl');
@@ -1877,22 +1269,8 @@ async function runScenarios() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail || 'Request failed');
 
-    const sc = (d.scenarios || []).map((s, idx) => ({
-      ...s,
-      _uiKey: scenarioDomKey(s.id || s.scenario || s.user_input || idx)
-    }));
-
-    currentScenarioData = { ...d, scenarios: sc };
-
-    scenarioFilters = { category: 'all', verdict: 'all', search: '' };
-    scenarioGroupState = { normal: true, edge_case: true, adversarial: true };
-
-    const searchInput = document.getElementById('scenario-search');
-    if (searchInput) searchInput.value = '';
-    document.querySelectorAll('[data-filter-group]').forEach(el => {
-      el.classList.toggle('active', el.dataset.filterValue === 'all');
-    });
-
+    const sc = d.scenarios || [];
+    currentScenarioData = d;
     document.getElementById('sr-count').textContent = sc.length + ' scenarios';
     exp.disabled = false;
     exp.style.opacity = '1';
@@ -1907,17 +1285,11 @@ async function runScenarios() {
     const cls    = { normal:'sg-normal', edge_case:'sg-edge', adversarial:'sg-adversarial' };
 
     document.getElementById('sr-body').innerHTML = Object.entries(groups).map(([type, items]) => `
-      <div class="scenario-group" data-scenario-group="${type}">
-        <button class="scenario-group-header" onclick="toggleScenarioGroup('${type}')">
-          <div class="scenario-group-title">${labels[type]}</div>
-          <div class="scenario-group-count">${items.length} scenario${items.length === 1 ? '' : 's'} · <span id="scenario-group-toggle-${type}">Collapse</span></div>
-        </button>
-        <div class="scenario-group-body" id="scenario-group-body-${type}">
-          ${items.length ? items.map((s) => renderScenarioCard(s, s._uiKey)).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
-        </div>
+      <div class="${cls[type]}">
+        <div class="sg-hdr">${labels[type]}</div>
+        ${items.length ? items.map(renderScenarioCard).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
       </div>`).join('');
 
-    applyScenarioFilters();
     rs.classList.add('show');
   } catch(e) {
     showErr('se', 'Error: ' + e.message);
@@ -1925,6 +1297,7 @@ async function runScenarios() {
     ld.classList.remove('show');
   }
 }
+
 function downloadScenarios() {
   if (!currentScenarioData) return;
   const blob = new Blob([JSON.stringify(currentScenarioData, null, 2)], { type: 'application/json' });
@@ -1936,411 +1309,73 @@ function downloadScenarios() {
   URL.revokeObjectURL(url);
 }
 
-
-function scenarioDomKey(raw) {
-  const key = String(raw ?? '')
-    .trim()
-    .replace(/[^a-zA-Z0-9_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  return key || ('sc-' + Math.random().toString(36).slice(2, 8));
-}
-
-function isPlaceholderEvaluation(evaluation) {
-  if (!evaluation || typeof evaluation !== 'object') return true;
-
-  const metricKeys = [
+function renderScenarioCard(s) {
+  const evalDims = ((s.evaluation && s.evaluation.dimensions) || [
     'policy_compliance',
     'refusal_correctness',
     'tone_quality',
+    'escalation_handling',
     'hallucination_risk',
     'security_compliance'
-  ];
+  ]).map(d => `<span style="display:inline-block;padding:4px 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:11px;color:var(--ink3);">${escapeHTML(prettyLabel(d))} · Pending evaluation</span>`).join('');
 
-  const values = metricKeys.map(k => Number(evaluation[k]));
-  const allMissingOrZero = values.every(v => !Number.isFinite(v) || v === 0);
-
-  const reason = String(evaluation.reason || '').trim();
-  const better = String(evaluation.better_response || '').trim();
-  const verdict = String(evaluation.overall_verdict || '').trim().toLowerCase();
-
-  const looksLikePlaceholderReason =
-    !reason ||
-    reason === 'No reason provided.' ||
-    reason === 'No improved response provided.';
-
-  const looksLikePlaceholderBetter =
-    !better ||
-    better === 'No improved response provided.' ||
-    better === 'No reason provided.';
-
-  const looksLikePlaceholderVerdict = !verdict || verdict === 'warn';
-
-  return allMissingOrZero && looksLikePlaceholderReason && looksLikePlaceholderBetter && looksLikePlaceholderVerdict;
-}
-
-function evaluationScoreClass(value, invert = false) {
-  const v = Number(value);
-  if (!Number.isFinite(v)) return 'mid';
-  if (invert) return v >= 7 ? 'bad' : v >= 4 ? 'mid' : 'good';
-  return v >= 7 ? 'good' : v >= 4 ? 'mid' : 'bad';
-}
-
-function renderMetricBox(label, value, invert = false) {
-  const cls = evaluationScoreClass(value, invert);
-  const numericValue = Number(value);
-  const displayValue = Number.isFinite(numericValue) ? `${numericValue}/10` : '—';
-  return `
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;min-width:0;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">${escapeHTML(label)}</div>
-      <div style="font-size:20px;font-weight:700;line-height:1;color:var(--ink);margin-bottom:4px;" class="score-val ${cls}">${displayValue}</div>
-    </div>`;
-}
-
-function renderEvaluationPending(key) {
-  return `
-    <div style="background:var(--surface);border:1px dashed var(--border2);border-radius:10px;padding:14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-        <div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px;">Evaluation</div>
-          <div style="font-size:13px;color:var(--ink3);">Not evaluated yet.</div>
-        </div>
-        <button
-          id="eval-btn-${key}"
-          onclick="runScenarioEvaluation('${key}')"
-          style="padding:8px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);box-shadow:0 1px 3px rgba(37,99,235,0.25);">
-          Run Evaluation
-        </button>
-      </div>
-    </div>`;
-}
-
-function renderEvaluationResult(evaluation, key) {
-  const safeEvaluation = evaluation || {};
-  const verdict = String(safeEvaluation.overall_verdict || 'warn').toLowerCase();
-
-  const verdictBg =
-    verdict === 'pass' ? 'var(--green-lt)' :
-    verdict === 'fail' ? 'var(--red-lt)' :
-    'var(--amber-lt)';
-
-  const verdictColor =
-    verdict === 'pass' ? 'var(--green)' :
-    verdict === 'fail' ? 'var(--red)' :
-    'var(--amber)';
-
-  const verdictBorder =
-    verdict === 'pass' ? '#A7F3D0' :
-    verdict === 'fail' ? '#FECACA' :
-    '#FDE68A';
-
-  const hallucinationValue = Number(safeEvaluation.hallucination_risk || 0);
-  let hallucinationLabel = 'Low';
-  if (hallucinationValue >= 7) hallucinationLabel = 'High';
-  else if (hallucinationValue >= 4) hallucinationLabel = 'Medium';
-
-  const hallucinationClass = hallucinationLabel.toLowerCase();
-
-  function renderStatus(label, status, reason) {
-    const normalized = String(status || '').toLowerCase();
-    const isPass = normalized === 'pass';
-
-    return `
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);">
-            ${escapeHTML(label)}
-          </div>
-          <span style="padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;background:${isPass ? 'var(--green-lt)' : 'var(--red-lt)'};color:${isPass ? 'var(--green)' : 'var(--red)'};border:1px solid ${isPass ? '#A7F3D0' : '#FECACA'};">
-            ${escapeHTML(status || 'unknown')}
-          </span>
-        </div>
-        <div style="font-size:13px;line-height:1.6;color:var(--ink2);">
-          ${escapeHTML(reason || 'No reason provided.')}
-        </div>
-      </div>
-    `;
-  }
-
-  function compactMetric(label, value, invert = false) {
-    const cls = evaluationScoreClass(value, invert);
-    const numericValue = Number(value);
-    const displayValue = Number.isFinite(numericValue) ? `${numericValue}/10` : '—';
-
-    return `
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:0;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">
-          ${escapeHTML(label)}
-        </div>
-        <div style="font-size:18px;font-weight:700;line-height:1;color:var(--ink);" class="score-val ${cls}">
-          ${displayValue}
-        </div>
-      </div>
-    `;
-  }
-
-  return `
-    <div id="scenario-eval-wrapper-${key}" onclick="if (!event.target.closest('button')) toggleEvaluationDetails('${key}')" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);">
-          Evaluation Results
-        </div>
-        <span style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:${verdictBg};color:${verdictColor};border:1px solid ${verdictBorder};">
-          ${escapeHTML(verdict)}
-        </span>
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px;">
-        ${compactMetric('Policy Compliance', safeEvaluation.policy_compliance)}
-        ${compactMetric('Refusal Correctness', safeEvaluation.refusal_correctness)}
-        ${compactMetric('Security Compliance', safeEvaluation.security_compliance)}
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px;">
-        ${compactMetric('Tone Quality', safeEvaluation.tone_quality)}
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">
-            Hallucination Risk
-          </div>
-          <span class="risk-pill risk-${hallucinationClass}">${hallucinationLabel}</span>
-        </div>
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-        <button
-          id="scenario-eval-toggle-${key}"
-          onclick="event.stopPropagation(); toggleEvaluationDetails('${key}')"
-          style="padding:7px 12px;background:var(--blue-lt);color:var(--blue);border:1px solid var(--blue-mid);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);">
-          View Results
-        </button>
-      </div>
-
-      <div id="scenario-eval-details-${key}" style="display:none;flex-direction:column;gap:10px;">
-        <div style="margin-bottom:2px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">
-            Simulated Agent Response
-          </div>
-          <div style="font-size:13px;line-height:1.7;color:var(--ink2);white-space:pre-wrap;">
-            ${escapeHTML(safeEvaluation.simulated_response || 'No simulated response generated.')}
-          </div>
-        </div>
-
-        ${renderStatus(
-          'Policy Compliance Status',
-          safeEvaluation.policy_compliance_status,
-          safeEvaluation.policy_compliance_reason
-        )}
-
-        ${renderStatus(
-          'Refusal Correctness Status',
-          safeEvaluation.refusal_correctness_status,
-          safeEvaluation.refusal_correctness_reason
-        )}
-
-        ${renderStatus(
-          'Security Compliance Status',
-          safeEvaluation.security_compliance_status,
-          safeEvaluation.security_compliance_reason
-        )}
-
-        <div style="margin-top:2px;padding-top:14px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">
-            Overall Evaluation
-          </div>
-          <div style="font-size:13px;line-height:1.6;color:var(--ink2);">
-            ${escapeHTML(safeEvaluation.reason || 'No evaluation summary provided.')}
-          </div>
-        </div>
-
-        <div style="margin-top:2px;padding-top:14px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">
-            Better Response
-          </div>
-          <div style="font-size:13px;line-height:1.7;color:var(--ink2);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;">
-            ${escapeHTML(safeEvaluation.better_response || 'No better response provided.')}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-
-function renderScenarioCard(s, key) {
-  const domKey = scenarioDomKey(key ?? s._uiKey ?? s.id ?? s.scenario ?? s.user_input);
   const failureModes = (s.failure_modes || []).map(f => `<li>${escapeHTML(f)}</li>`).join('');
   const tags = (s.tags || []).map(t => `<span style="display:inline-block;padding:4px 8px;border-radius:999px;background:var(--blue-lt);border:1px solid var(--blue-mid);font-size:11px;color:var(--blue);">${escapeHTML(t)}</span>`).join('');
   const mt = s.multi_turn ? 'Yes' : 'No';
   const esc = s.escalation_required ? 'Yes' : 'No';
   const sev = String(s.severity || 'medium').toLowerCase();
-  const evaluationHtml = isPlaceholderEvaluation(s.evaluation)
-    ? renderEvaluationPending(domKey)
-    : renderEvaluationResult(s.evaluation, domKey);
-  const verdict = getScenarioVerdict(s);
-  const searchText = getScenarioSearchText(s);
-  const hasEvaluation = verdict !== 'pending';
 
   return `
-    <div class="scenario-card" id="scenario-card-${domKey}" data-scenario-key="${domKey}" data-scenario-id="${escapeHTML(s.id || '')}" data-scenario-title="${escapeHTML(s.scenario || s.user_input || '')}" data-search="${escapeHTML(searchText)}" data-category="${escapeHTML(getScenarioCategory(s))}" data-verdict="${escapeHTML(verdict)}">
-      <button class="scenario-card-header" onclick="toggleScenarioCard('${domKey}')">
-        <div class="scenario-card-top">
-          <div style="min-width:0;flex:1;">
-            <div class="scenario-card-meta">${escapeHTML(s.id || '')} · ${escapeHTML(prettyLabel(s.category || s.type || ''))}</div>
-            <div class="scenario-card-title">${escapeHTML(s.scenario || s.user_input || '')}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-            <span class="sev-badge sev-${escapeHTML(sev).toUpperCase()}">${escapeHTML(sev)} severity</span>
-            <span id="scenario-verdict-${domKey}" class="scenario-verdict-pill scenario-verdict-${hasEvaluation ? escapeHTML(verdict) : 'pending'}">${escapeHTML(getScenarioVerdictLabel(s))}</span>
-            <span id="scenario-card-toggle-${domKey}" class="scenario-card-toggle">Expand</span>
-          </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow-sm);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:0.3px;margin-bottom:6px;">${escapeHTML(s.id || '')} · ${escapeHTML(prettyLabel(s.category || s.type || ''))}</div>
+          <div style="font-size:14px;color:var(--ink);font-weight:600;line-height:1.5;">${escapeHTML(s.scenario || s.user_input || '')}</div>
         </div>
-      </button>
+        <span class="sev-badge sev-${escapeHTML(sev).toUpperCase()}">${escapeHTML(sev)} severity</span>
+      </div>
 
-      <div class="scenario-card-details" id="scenario-card-details-${domKey}">
-        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;">
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Subcategory</div>
-            <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.subcategory || '—')}</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Policy Area</div>
-            <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.policy_area || '—')}</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Tone / Ambiguity</div>
-            <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.emotional_tone || '—')} · ${escapeHTML(s.ambiguity_level || '—')}</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Escalation / Multi-turn</div>
-            <div style="font-size:13px;color:var(--ink2);line-height:1.5;">Escalation: ${esc} · Multi-turn: ${mt}</div>
-          </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Subcategory</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.subcategory || '—')}</div>
         </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Policy Area</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.policy_area || '—')}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Tone / Ambiguity</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${escapeHTML(s.emotional_tone || '—')} · ${escapeHTML(s.ambiguity_level || '—')}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Escalation / Multi-turn</div>
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">Escalation: ${esc} · Multi-turn: ${mt}</div>
+        </div>
+      </div>
 
-        <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Expected Behavior</div>
-          <div style="font-size:13px;color:var(--ink2);line-height:1.55;">${escapeHTML(s.expected_behavior || '')}</div>
-        </div>
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Expected Behavior</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.55;">${escapeHTML(s.expected_behavior || '')}</div>
+      </div>
 
-        <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Failure Modes</div>
-          <ul style="margin:0;padding-left:18px;color:var(--ink2);font-size:13px;line-height:1.55;">${failureModes || '<li>No failure modes provided</li>'}</ul>
-        </div>
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px;">Failure Modes</div>
+        <ul style="margin:0;padding-left:18px;color:var(--ink2);font-size:13px;line-height:1.55;">${failureModes || '<li>No failure modes provided</li>'}</ul>
+      </div>
 
-        <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Tags</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">${tags || '<span style="font-size:13px;color:var(--ink4);">None</span>'}</div>
-        </div>
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${tags || '<span style="font-size:13px;color:var(--ink4);">None</span>'}</div>
+      </div>
 
-        <div id="scenario-eval-${domKey}" style="margin-top:12px;">
-          ${evaluationHtml}
-        </div>
+      <div style="margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px;">Evaluation · Pending evaluation</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">${evalDims}</div>
       </div>
     </div>`;
 }
-async function runScenarioEvaluation(rawKey) {
-  const key = scenarioDomKey(rawKey);
-  const scenario = currentScenarioData?.scenarios?.find(s => scenarioDomKey(s._uiKey ?? s.id ?? s.scenario ?? s.user_input) === key);
-  if (!scenario) {
-    alert('Scenario not found.');
-    return;
-  }
 
-  const btn = document.getElementById(`eval-btn-${key}`);
-  const panel = document.getElementById(`scenario-eval-${key}`);
-  if (!panel) return;
-
-  const originalBtnText = btn ? btn.textContent : '';
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Evaluating...';
-    btn.style.opacity = '0.75';
-  }
-
-  panel.innerHTML = `
-    <div style="background:var(--surface);border:1px dashed var(--border2);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;color:var(--ink3);font-size:13px;">
-      <div class="spinner" style="width:16px;height:16px;"></div>
-      Running evaluation against the model...
-    </div>`;
-
-  try {
-    const payload = {
-      agent_description: currentScenarioData?.agent_description || '',
-      scenario: scenario.scenario || scenario.user_input || '',
-      category: scenario.category || scenario.type || null,
-      subcategory: scenario.subcategory || null,
-      policy_area: scenario.policy_area || null,
-      failure_modes: scenario.failure_modes || []
-    };
-
-    const response = await fetch(API + '/evaluate-scenario', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.detail || 'Evaluation failed');
-    }
-
-    const evaluation = (data && typeof data.evaluation === 'object' && data.evaluation) ? data.evaluation : data;
-    const normalizedEvaluation = {
-      policy_compliance: Number(evaluation.policy_compliance_score ?? evaluation.policy_compliance ?? 0),
-      refusal_correctness: Number(evaluation.refusal_correctness_score ?? evaluation.refusal_correctness ?? 0),
-      tone_quality: Number(evaluation.tone_quality ?? 0),
-      security_compliance: Number(evaluation.security_compliance_score ?? evaluation.security_compliance ?? 0),
-      hallucination_risk: String(evaluation.hallucination_risk || 'low').toLowerCase(),
-      policy_compliance_status: evaluation.policy_compliance_status || '',
-      policy_compliance_reason: evaluation.policy_compliance_reason || '',
-      refusal_correctness_status: evaluation.refusal_correctness_status || '',
-      refusal_correctness_reason: evaluation.refusal_correctness_reason || '',
-      security_compliance_status: evaluation.security_compliance_status || '',
-      security_compliance_reason: evaluation.security_compliance_reason || '',
-      simulated_response: data.simulated_response || '',
-      overall_verdict: evaluation.overall_verdict || 'warn',
-      reason: evaluation.reason || 'No reason provided.',
-      better_response: evaluation.better_response || 'No improved response provided.',
-      _evaluated: true
-    };
-
-    scenario.evaluation = normalizedEvaluation;
-    if (currentScenarioData?.scenarios) {
-      const idx = currentScenarioData.scenarios.findIndex(s => s._uiKey === scenario._uiKey);
-      if (idx >= 0) currentScenarioData.scenarios[idx].evaluation = normalizedEvaluation;
-    }
-
-    const card = document.getElementById(`scenario-card-${key}`);
-    if (card) {
-      card.dataset.verdict = normalizedEvaluation.overall_verdict || 'pending';
-    }
-    const verdictPill = document.getElementById(`scenario-verdict-${key}`);
-    if (verdictPill) {
-      const v = String(normalizedEvaluation.overall_verdict || 'pending').toLowerCase();
-      verdictPill.className = `scenario-verdict-pill scenario-verdict-${v}`;
-      verdictPill.textContent = v.toUpperCase();
-    }
-
-    panel.innerHTML = renderEvaluationResult(normalizedEvaluation, key);
-    setScenarioCardOpen(key, true);
-
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = 'Re-run Evaluation';
-      btn.style.opacity = '1';
-    }
-  } catch (error) {
-    panel.innerHTML = `
-      <div style="background:var(--red-lt);border:1px solid #FECACA;border-radius:10px;padding:14px;color:var(--red);font-size:13px;line-height:1.6;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">Evaluation failed</div>
-        ${escapeHTML(error.message)}
-      </div>`;
-
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = originalBtnText || 'Run Evaluation';
-      btn.style.opacity = '1';
-    }
-  }
-}
 /* ─── REPORTS */
 async function loadReports() {
   try {
@@ -2471,30 +1506,9 @@ function renderDebugReport(turns) {
     </div>`).join('');
 }
 
-function setEvaluationDetails(key, open) {
-  const details = document.getElementById(`scenario-eval-details-${key}`);
-  const btn = document.getElementById(`scenario-eval-toggle-${key}`);
-  if (!details || !btn) return;
-  details.style.display = open ? 'flex' : 'none';
-  btn.textContent = open ? 'Hide Results' : 'View Results';
-}
-
-function toggleEvaluationDetails(key) {
-  const details = document.getElementById(`scenario-eval-details-${key}`);
-  if (!details) return;
-  const isHidden = details.style.display === 'none' || !details.style.display;
-  setEvaluationDetails(key, isHidden);
-}
-
-
 function renderScenariosReport(d) {
-  const sc = (d.scenarios || []).map((s, idx) => ({
-    ...s,
-    _uiKey: s._uiKey || scenarioDomKey(s.id || s.scenario || s.user_input || idx)
-  }));
-
   const groups = { normal:[], edge_case:[], adversarial:[] };
-  sc.forEach(s => {
+  (d.scenarios||[]).forEach(s => {
     const cat = String(s.category || s.type || '').toLowerCase();
     if (groups[cat]) groups[cat].push(s);
   });
@@ -2503,16 +1517,15 @@ function renderScenariosReport(d) {
   const colors = { normal:'var(--green)', edge_case:'var(--amber)', adversarial:'var(--red)' };
 
   return Object.entries(groups).map(([type, items]) => `
-    <div class="scenario-group" data-scenario-group="${type}" style="margin-bottom:18px;">
-      <button class="scenario-group-header" onclick="toggleScenarioGroup('${type}')">
-        <div class="scenario-group-title" style="color:${colors[type]};">${labels[type]}</div>
-        <div class="scenario-group-count">${items.length} scenario${items.length === 1 ? '' : 's'} · <span id="scenario-group-toggle-${type}">Collapse</span></div>
-      </button>
-      <div class="scenario-group-body" id="scenario-group-body-${type}">
-        ${items.length ? items.map((s) => renderScenarioCard(s, s._uiKey)).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:${colors[type]};margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+        ${labels[type]}
+        <span style="flex:1;height:1px;background:var(--border);display:block;"></span>
       </div>
+      ${items.length ? items.map(renderScenarioCard).join('') : '<div style="font-size:13px;color:var(--ink4);padding:8px 0;">No scenarios in this category.</div>'}
     </div>`).join('');
 }
+
 function renderComparisonReport(d) {
   return `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
