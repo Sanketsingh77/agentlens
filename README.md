@@ -2,7 +2,7 @@
 
 AgentLens is an AI Agent Evaluation Platform built to test, debug, and evaluate customer-support AI agents across policy compliance, hallucination risk, tone quality, escalation handling, and security behavior.
 
-The platform allows users to upload conversations, generate adversarial test scenarios, simulate agent responses, and evaluate them with automated PASS/WARN/FAIL verdicts using multiple LLM providers with fallback handling.
+The platform allows users to upload conversations, generate different test scenarios, simulate agent responses, and evaluate them with automated PASS/WARN/FAIL verdicts using multiple LLM providers with fallback handling.
 
 ---
 
